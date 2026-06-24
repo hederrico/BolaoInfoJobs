@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolão MELI · Copa 2026 ao vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14;--panel:#141A22;--panel-2:#101720;--line:rgba(255,255,255,.07);--line-2:rgba(255,255,255,.13);
+    --ink:#EAF0F6;--muted:#8A98A8;--muted-2:#5d6b7a;
+    --green:#1FB57A;--gold:#E6B450;--live:#FF4D5E;--zero:#6B7785;
+    --radius:16px;--display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--body:"Inter",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(1200px 600px at 18% -10%,#16202c 0%,transparent 60%),radial-gradient(1000px 500px at 100% 0%,#121a24 0%,transparent 55%),var(--bg);}
+  .wrap{max-width:1080px;margin:0 auto;padding:22px 16px 70px}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand .mark{font-family:var(--display);font-weight:800;font-size:29px;letter-spacing:.02em;line-height:1}
+  .brand .mark b{color:var(--green)}
+  .brand .tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .rules{display:flex;gap:7px;flex-wrap:wrap}
+  .rule{font-size:11.5px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);padding:5px 10px;border-radius:999px;display:flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.g{background:var(--green)}.dot.y{background:var(--gold)}.dot.z{background:var(--zero)}
+
+  .statusbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 18px;font-size:12.5px;color:var(--muted)}
+  .conn{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+  .heart{width:9px;height:9px;border-radius:50%;background:var(--muted-2)}
+  .conn.ok .heart{background:var(--green)}
+  .conn.live .heart{background:var(--live);animation:beat 1.15s ease-in-out infinite}
+  .conn.off .heart{background:var(--live)}
+  @keyframes beat{0%{box-shadow:0 0 0 0 rgba(255,77,94,.5)}70%{box-shadow:0 0 0 7px rgba(255,77,94,0)}100%{box-shadow:0 0 0 0 rgba(255,77,94,0)}}
+  @media (prefers-reduced-motion:reduce){.conn.live .heart{animation:none}}
+  .statusbar .sep{color:var(--muted-2)}
+  .statusbar button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);font:inherit;font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;cursor:pointer}
+  .statusbar button:hover{border-color:var(--line-2)}
+
+  .sectitle{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    margin:24px 4px 12px;display:flex;align-items:center;gap:9px}
+  .sectitle .pulse{width:8px;height:8px;border-radius:50%;background:var(--live);animation:beat 1.15s infinite}
+  .sectitle:first-of-type{margin-top:6px}
+
+  /* game card */
+  .card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:16px;position:relative}
+  .chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:600}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    padding:5px 11px;border-radius:999px;border:1px solid var(--line)}
+  .chip.live{color:var(--live);border-color:rgba(255,77,94,.35);background:rgba(255,77,94,.08)}
+  .chip.live .hb{width:8px;height:8px;border-radius:50%;background:var(--live);animation:beat 1.15s infinite}
+  .chip.done{color:var(--green);border-color:rgba(31,181,122,.35);background:rgba(31,181,122,.08)}
+  .chip.soon{color:var(--gold);border-color:rgba(230,180,80,.3);background:rgba(230,180,80,.07)}
+
+  .scoreline{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+  .team{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+  .team img{width:66px;height:50px;border-radius:7px;object-fit:cover;background:var(--panel-2);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+  .team .nm{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.02em;text-align:center;line-height:1.05}
+  .bigscore{font-family:var(--display);font-weight:800;font-size:50px;line-height:1;letter-spacing:.02em;white-space:nowrap}
+  .bigscore .s{color:var(--ink)}.bigscore .x{color:var(--muted-2);margin:0 8px;font-size:34px;vertical-align:6px}
+  .kickoff{font-family:var(--display);font-weight:700;font-size:26px;color:var(--muted);white-space:nowrap;text-align:center}
+  .kickoff small{display:block;font-family:var(--body);font-size:10.5px;letter-spacing:.06em;color:var(--muted-2);font-weight:600;margin-top:3px}
+
+  .body2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:16px}
+  @media (max-width:720px){.body2{grid-template-columns:1fr}.team img{width:52px;height:40px}.team .nm{font-size:17px}.bigscore{font-size:40px}}
+  .sub{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);font-weight:700;margin:0 0 9px}
+
+  .guesses{display:flex;flex-direction:column;gap:5px}
+  .guess{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:9px;background:var(--panel-2)}
+  .guess .who{flex:1;font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ginp{width:34px;height:34px;text-align:center;font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);
+    background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:0;-moz-appearance:textfield}
+  .ginp::-webkit-outer-spin-button,.ginp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .ginp:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(230,180,80,.16)}
+  .gsep{color:var(--muted-2);font-family:var(--display);font-size:15px}
+
+  .rank{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:9px;margin-bottom:5px;background:var(--panel-2);border:1px solid transparent}
+  .rank .pos{font-family:var(--display);font-weight:700;font-size:14px;color:var(--muted-2);width:16px;text-align:center}
+  .rank .who{flex:1;font-weight:600;font-size:13.5px}
+  .move{font-size:10.5px;font-weight:700;letter-spacing:.01em;margin-right:3px;opacity:.9}
+  .move.up{color:var(--green)}
+  .move.down{color:#E06A73}
+  .move.flat{color:var(--muted-2);font-weight:600;opacity:.6}
+  .rank .badge{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;color:var(--muted)}
+  .rank .pts{font-family:var(--display);font-weight:800;font-size:20px;width:34px;text-align:right;color:var(--ink)}
+  .rank.cravou{border-color:rgba(31,181,122,.4)}.rank.cravou .badge{color:var(--green);background:rgba(31,181,122,.12)}.rank.cravou .pts{color:var(--green)}
+  .rank.vencedor .badge{color:var(--gold);background:rgba(230,180,80,.12)}.rank.vencedor .pts{color:var(--gold)}
+  .rank.errou .badge{color:var(--zero);background:rgba(107,119,133,.1)}.rank.errou .pts{color:var(--zero)}
+  .rank.pend .badge{color:var(--muted-2)}.rank.pend .pts{color:var(--muted-2)}
+  .rank.leader{box-shadow:0 0 0 1px rgba(230,180,80,.5)}.rank.leader .pos{color:var(--gold)}
+
+  /* linha unificada: palpite + pontos numa coisa só */
+  .ulist{display:flex;flex-direction:column;gap:5px}
+  .urow{display:grid;grid-template-columns:16px minmax(40px,1fr) auto 94px 38px;align-items:center;gap:8px;padding:7px 9px;border-radius:9px;background:var(--panel-2);border:1px solid transparent}
+  .urow .pos{font-family:var(--display);font-weight:700;font-size:14px;color:var(--muted-2);text-align:center}
+  .urow .who{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .urow .inp{display:flex;align-items:center;gap:5px}
+  .urow .badge{justify-self:start;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;color:var(--muted);white-space:nowrap}
+  .urow .pts{font-family:var(--display);font-weight:800;font-size:20px;text-align:right;color:var(--ink)}
+  .urow.cravou{border-color:rgba(31,181,122,.4)}.urow.cravou .badge{color:var(--green);background:rgba(31,181,122,.12)}.urow.cravou .pts{color:var(--green)}
+  .urow.vencedor .badge{color:var(--gold);background:rgba(230,180,80,.12)}.urow.vencedor .pts{color:var(--gold)}
+  .urow.errou .badge{color:var(--zero);background:rgba(107,119,133,.1)}.urow.errou .pts{color:var(--zero)}
+  .urow.pend .badge{color:var(--muted-2)}.urow.pend .pts{color:var(--muted-2)}
+  .urow.leader{box-shadow:0 0 0 1px rgba(230,180,80,.5)}.urow.leader .pos{color:var(--gold)}
+  @media (max-width:480px){.urow{grid-template-columns:16px minmax(40px,1fr) auto 34px}.urow .badge{display:none}.urow .ginp{width:31px;height:31px;font-size:17px}}
+
+  /* upcoming compact */
+  .soonrow{display:flex;align-items:center;gap:12px;cursor:pointer}
+  .soonrow .clock{font-size:20px;filter:grayscale(.2)}
+  .soonrow .vs{flex:1;display:flex;align-items:center;gap:9px;min-width:0;flex-wrap:wrap}
+  .soonrow .vs img{width:30px;height:22px;border-radius:4px;object-fit:cover}
+  .soonrow .vs .t{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.02em}
+  .soonrow .vs .mid{color:var(--muted-2);font-family:var(--display);font-size:14px}
+  .soonrow .when{font-family:var(--display);font-weight:700;font-size:18px;color:var(--gold);text-align:right;white-space:nowrap}
+  .soonrow .when small{display:block;font-family:var(--body);font-size:10px;color:var(--muted-2);font-weight:600;letter-spacing:.05em}
+  .soonrow .caret{color:var(--muted-2);font-size:12px;transition:.2s}
+  .card.open .soonrow .caret{transform:rotate(180deg)}
+  .soonbody{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .card.open .soonbody{display:block}
+
+  .geral .rank .pts{color:var(--ink)}
+  .empty{color:var(--muted-2);font-size:13.5px;text-align:center;padding:26px 14px;background:var(--panel-2);border:1px dashed var(--line);border-radius:var(--radius)}
+  .empty b{color:var(--ink)}
+  footer{margin-top:30px;text-align:center;color:var(--muted-2);font-size:11.5px;line-height:1.7}
+  footer code{color:var(--muted)}
+  input,button{font-family:inherit}::selection{background:rgba(31,181,122,.3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="mark">BOLÃO <b>MELI</b></div><div class="tag">Copa 2026</div></div>
+    <div class="rules">
+      <span class="rule"><span class="dot g"></span> Cravou · +6</span>
+      <span class="rule"><span class="dot y"></span> Vencedor/empate · +3</span>
+      <span class="rule"><span class="dot z"></span> Errou · 0</span>
+    </div>
+  </header>
+
+  <div class="statusbar">
+    <span class="conn" id="conn"><span class="heart"></span><span id="connTxt">Conectando ao ao vivo…</span></span>
+    <span class="sep">·</span>
+    <span id="updated">—</span>
+    <button id="refresh">Atualizar</button>
+  </div>
+
+  <div id="app"></div>
+
+  <footer>
+    Placar ao vivo via API pública aberta <code>worldcup26.ir</code> · atualiza sozinho a cada 30s.<br>
+    Se ficar "sem conexão" (a prévia do Claude às vezes bloqueia chamadas externas): baixe o arquivo e abra direto no navegador.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ===== DADOS DAS SELEÇÕES (id = team_id do feed) ===== */
+const TEAMS={
+ 1:{pt:"México",code:"mx"},2:{pt:"África do Sul",code:"za"},3:{pt:"Coreia do Sul",code:"kr"},4:{pt:"Rep. Tcheca",code:"cz"},
+ 5:{pt:"Canadá",code:"ca"},6:{pt:"Bósnia",code:"ba"},7:{pt:"Catar",code:"qa"},8:{pt:"Suíça",code:"ch"},
+ 9:{pt:"Brasil",code:"br"},10:{pt:"Marrocos",code:"ma"},11:{pt:"Haiti",code:"ht"},12:{pt:"Escócia",code:"gb-sct"},
+ 13:{pt:"Estados Unidos",code:"us"},14:{pt:"Paraguai",code:"py"},15:{pt:"Austrália",code:"au"},16:{pt:"Turquia",code:"tr"},
+ 17:{pt:"Alemanha",code:"de"},18:{pt:"Curaçao",code:"cw"},19:{pt:"Costa do Marfim",code:"ci"},20:{pt:"Equador",code:"ec"},
+ 21:{pt:"Holanda",code:"nl"},22:{pt:"Japão",code:"jp"},23:{pt:"Suécia",code:"se"},24:{pt:"Tunísia",code:"tn"},
+ 25:{pt:"Bélgica",code:"be"},26:{pt:"Egito",code:"eg"},27:{pt:"Irã",code:"ir"},28:{pt:"Nova Zelândia",code:"nz"},
+ 29:{pt:"Espanha",code:"es"},30:{pt:"Cabo Verde",code:"cv"},31:{pt:"Arábia Saudita",code:"sa"},32:{pt:"Uruguai",code:"uy"},
+ 33:{pt:"França",code:"fr"},34:{pt:"Senegal",code:"sn"},35:{pt:"Iraque",code:"iq"},36:{pt:"Noruega",code:"no"},
+ 37:{pt:"Argentina",code:"ar"},38:{pt:"Argélia",code:"dz"},39:{pt:"Áustria",code:"at"},40:{pt:"Jordânia",code:"jo"},
+ 41:{pt:"Portugal",code:"pt"},42:{pt:"RD Congo",code:"cd"},43:{pt:"Uzbequistão",code:"uz"},44:{pt:"Colômbia",code:"co"},
+ 45:{pt:"Inglaterra",code:"gb-eng"},46:{pt:"Croácia",code:"hr"},47:{pt:"Gana",code:"gh"},48:{pt:"Panamá",code:"pa"}
+};
+const PLAYERS=["Delay","Boy","Gerv","Bipe","Sergin","Zanele","Greg","Patras","Cunhado","Paia"];
+// Pontuação acumulada das rodadas anteriores (antes do app)
+const BASELINE={Delay:114,Boy:111,Gerv:105,Bipe:99,Sergin:99,Zanele:90,Greg:90,Patras:87,Cunhado:78,Paia:66};
+const flagW=req=>{const o=[40,80,160,320];const want=(req||40)*2;return o.find(x=>x>=want)||320;};
+const flag=(id,w)=>{const t=TEAMS[id];return t?`https://flagcdn.com/w${flagW(w)}/${t.code}.png`:"";};
+const nm=id=>TEAMS[id]?TEAMS[id].pt:("#"+id);
+
+/* ===== STORAGE (fallback memória p/ sandbox) ===== */
+const KEY="bolao_meli_live_v1";let mem={};
+function loadG(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):{};}catch(e){return mem;}}
+function saveG(){try{localStorage.setItem(KEY,JSON.stringify(GUESS));}catch(e){mem=GUESS;}}
+let GUESS=loadG(); // { gameId: { player:{a,b} } }
+
+/* ===== SUPABASE (palpites compartilhados entre todos) ===== */
+// >>> cole a URL e a anon key do seu projeto aqui. Vazio = continua só local. <<<
+const SUPABASE_URL="https://xeegulrngafbhpfteabu.supabase.co";   // base, sem /rest/v1/
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlZWd1bHJuZ2FmYmhwZnRlYWJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMjQzMTAsImV4cCI6MjA5NzkwMDMxMH0.Lb8cJCehlQOYaJKb89iOMpqhLzq55BdtziMbrcYIIH8";   // anon public (ok ficar exposta)
+let sb=null;
+try{ if(SUPABASE_URL&&SUPABASE_KEY&&window.supabase){ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY); } }catch(e){ sb=null; }
+function supaUpsert(gid,player){
+  if(!sb)return;
+  const x=(GUESS[gid]||{})[player]||{a:"",b:""};
+  const home=x.a===""?null:+x.a, away=x.b===""?null:+x.b;
+  try{ sb.from("palpites").upsert({game_id:String(gid),player,home,away},{onConflict:"game_id,player"}).then(()=>{},()=>{}); }catch(e){}
+}
+async function supaPull(){
+  if(!sb)return false;
+  try{
+    const{data,error}=await sb.from("palpites").select("game_id,player,home,away");
+    if(error||!data)return false;
+    data.forEach(r=>{ if(!GUESS[r.game_id])GUESS[r.game_id]={};
+      GUESS[r.game_id][r.player]={a:(r.home==null?"":String(r.home)),b:(r.away==null?"":String(r.away))}; });
+    saveG();return true;
+  }catch(e){return false;}
+}
+
+/* ===== SCORING ===== */
+const sgn=x=>x>0?1:x<0?-1:0;
+function pts(guess,ra,rb,live){
+  if(ra==null||rb==null)return{p:null,k:"pend",l:"—"};            // jogo ainda sem resultado
+  const ok=guess&&guess.a!==""&&guess.a!=null&&guess.b!==""&&guess.b!=null;
+  if(!ok)return{p:0,k:"errou",l:"sem palpite"};                    // esqueceu de palpitar = 0
+  const ga=+guess.a,gb=+guess.b;
+  if(ga===ra&&gb===rb)return{p:6,k:"cravou",l:live?"cravando":"cravou"};
+  if(sgn(ga-gb)===sgn(ra-rb))return{p:3,k:"vencedor",l:live?"pontuando":"vencedor"};
+  return{p:0,k:"errou",l:live?"fora":"errou"};
+}
+// colocação com empate (1,2,2,4...): atribui .rank a linhas já ordenadas desc
+function compRanks(rows,val){let prev=null;rows.forEach((r,i)=>{const v=val(r);if(i===0||v!==prev)r.rank=i+1;else r.rank=rows[i-1].rank;prev=v;});return rows;}
+
+/* ===== FEED ===== */
+let GAMES=[];let lastOk=null;
+function classify(g){
+  if(String(g.finished).toUpperCase()==="TRUE")return"finished";
+  if(String(g.time_elapsed||"notstarted")!=="notstarted")return"live";
+  return"upcoming";
+}
+function res(g){ // resultado atual (home,away) ou null
+  const c=classify(g);if(c==="upcoming")return[null,null];
+  return[parseInt(g.home_score)||0,parseInt(g.away_score)||0];
+}
+function kickParts(g){ // "MM/DD/YYYY HH:MM" -> {ts, label}
+  const m=String(g.local_date||"").match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+  if(!m)return{ts:0,d:"",h:g.local_date||""};
+  const[,mo,da,yr,hh,mi]=m;
+  return{ts:new Date(+yr,+mo-1,+da,+hh,+mi).getTime(),d:`${da}/${mo}`,h:`${hh}:${mi}`};
+}
+function liveTxt(g){
+  const e=String(g.time_elapsed||"");
+  if(/^\d+$/.test(e))return e+"'";
+  return e.toUpperCase();
+}
+async function fetchGames(){
+  const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),8000);
+  try{
+    const r=await fetch("https://worldcup26.ir/get/games",{signal:ctrl.signal,headers:{Accept:"application/json"}});
+    clearTimeout(to);if(!r.ok)throw 0;const d=await r.json();return d.games||[];
+  }catch(e){clearTimeout(to);throw e;}
+}
+
+/* ===== ESTADO DE UI ===== */
+const expanded={}; // gid -> bool (próximos)
+let lastSig="";
+const inputFocused=()=>document.activeElement&&document.activeElement.classList&&document.activeElement.classList.contains("ginp");
+
+/* ===== RENDER ===== */
+function sig(live,soon){return live.map(g=>g.id+":"+classify(g)).join(",")+"|"+soon.map(g=>g.id).join(",");}
+
+function guessGrid(gid){
+  const wrap=document.createElement("div");wrap.className="guesses";
+  PLAYERS.forEach(p=>{
+    const g=(GUESS[gid]&&GUESS[gid][p])||{a:"",b:""};
+    const row=document.createElement("div");row.className="guess";
+    const who=document.createElement("span");who.className="who";who.textContent=p;
+    const ia=mkInp(g.a),sep=document.createElement("span");sep.className="gsep";sep.textContent="×";const ib=mkInp(g.b);
+    ia.oninput=()=>setGuess(gid,p,"a",ia.value);
+    ib.oninput=()=>setGuess(gid,p,"b",ib.value);
+    row.append(who,ia,sep,ib);wrap.appendChild(row);
+  });
+  return wrap;
+  function mkInp(v){const i=document.createElement("input");i.className="ginp";i.type="number";i.min="0";i.inputMode="numeric";i.placeholder="–";i.value=(v===0||v)?v:"";return i;}
+}
+function setGuess(gid,p,k,v){
+  if(!GUESS[gid])GUESS[gid]={};if(!GUESS[gid][p])GUESS[gid][p]={a:"",b:""};
+  GUESS[gid][p][k]=v===""?"":String(Math.max(0,parseInt(v)||0));
+  saveG();supaUpsert(gid,p);
+}
+function renderUnified(listEl,g){
+  listEl.innerHTML="";
+  const[ra,rb]=res(g);const live=classify(g)==="live";const hasResult=ra!=null;
+  const rows=PLAYERS.map(name=>{const r=pts((GUESS[g.id]||{})[name],ra,rb,live);return{name,pt:r.p,k:r.k,l:r.l};});
+  if(hasResult)rows.sort((x,y)=>(y.pt??-1)-(x.pt??-1));   // ordena como ranking quando há resultado
+  compRanks(rows,r=>(r.pt??-1));
+  const top=rows.length?rows[0].pt:0;
+  rows.forEach(r=>{
+    const row=document.createElement("div");
+    row.className="urow "+r.k+((hasResult&&r.pt!=null&&r.pt===top&&top>0&&r.rank===1)?" leader":"");
+    const posEl=document.createElement("span");posEl.className="pos";posEl.textContent=hasResult?r.rank:"";
+    const whoEl=document.createElement("span");whoEl.className="who";whoEl.textContent=r.name;
+    const inpEl=document.createElement("span");inpEl.className="inp";
+    const gx=(GUESS[g.id]||{})[r.name]||{a:"",b:""};
+    const ia=mkInp(gx.a),sep=document.createElement("span");sep.className="gsep";sep.textContent="×";const ib=mkInp(gx.b);
+    inpEl.append(ia,sep,ib);
+    const badgeEl=document.createElement("span");badgeEl.className="badge";
+    const ptsEl=document.createElement("span");ptsEl.className="pts";
+    const paint=()=>{const[ca,cb]=res(g);const lv=classify(g)==="live";const rr=pts((GUESS[g.id]||{})[r.name],ca,cb,lv);
+      row.className="urow "+rr.k;badgeEl.textContent=rr.p==null?"":rr.l;ptsEl.textContent=rr.p==null?"–":"+"+rr.p;};
+    paint();
+    ia.oninput=()=>{setGuess(g.id,r.name,"a",ia.value);paint();refreshGeral();};
+    ib.oninput=()=>{setGuess(g.id,r.name,"b",ib.value);paint();refreshGeral();};
+    ia.onblur=ib.onblur=()=>{setTimeout(()=>{if(!inputFocused())renderUnified(listEl,g);},80);}; // reordena ao sair
+    row.append(posEl,whoEl,inpEl,badgeEl,ptsEl);
+    listEl.appendChild(row);
+  });
+  function mkInp(v){const i=document.createElement("input");i.className="ginp";i.type="number";i.min="0";i.inputMode="numeric";i.placeholder="–";i.value=(v===0||v)?v:"";return i;}
+}
+function refreshGeral(){const c=document.querySelectorAll("#app .geral");if(c.length)c[c.length-1].replaceWith(buildGeral());}
+
+let refs={}; // gid -> {scoreEl, chipEl, rankEl}
+function buildLiveCard(g){
+  const live=classify(g)==="live";
+  const[ra,rb]=res(g);
+  const card=document.createElement("div");card.className="card";
+  const chead=document.createElement("div");chead.className="chead";
+  chead.innerHTML=`<span class="meta">Grupo ${g.group||"-"} · ${g.matchday?("Rodada "+g.matchday):"Fase de grupos"}</span>`;
+  const chip=document.createElement("span");
+  chip.className="chip "+(live?"live":"done");
+  chip.innerHTML=live?`<span class="hb"></span> Ao vivo · <span class="lm">${liveTxt(g)}</span>`:"Encerrado";
+  chead.appendChild(chip);card.appendChild(chead);
+
+  const sl=document.createElement("div");sl.className="scoreline";
+  const scoreEl=document.createElement("div");scoreEl.className="bigscore";
+  scoreEl.innerHTML=`<span class="s">${ra}</span><span class="x">:</span><span class="s">${rb}</span>`;
+  sl.innerHTML=`
+    <div class="team"><img src="${flag(+g.home_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.home_team_id)}</div></div>
+    <div></div>
+    <div class="team"><img src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.away_team_id)}</div></div>`;
+  sl.children[1].appendChild(scoreEl);
+  card.appendChild(sl);
+
+  const sub=document.createElement("p");sub.className="sub";sub.textContent="Palpites & como tá a rodada";
+  const listEl=document.createElement("div");listEl.className="ulist";
+  card.appendChild(sub);card.appendChild(listEl);
+
+  refs[g.id]={scoreEl,chip,listEl};
+  renderUnified(listEl,g);
+  return card;
+}
+function buildSoonCard(g){
+  const k=kickParts(g);
+  const card=document.createElement("div");card.className="card"+(expanded[g.id]?" open":"");
+  const row=document.createElement("div");row.className="soonrow";
+  row.innerHTML=`
+    <span class="clock">⏱️</span>
+    <span class="vs">
+      <img src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t">${nm(+g.home_team_id)}</span>
+      <span class="mid">×</span>
+      <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
+    </span>
+    <span class="when">${k.h}<small>${k.d} · grupo ${g.group||"-"}</small></span>
+    <span class="caret">▼</span>`;
+  const body=document.createElement("div");body.className="soonbody";
+  const subG=document.createElement("p");subG.className="sub";subG.textContent="Palpites (já deixa cravado)";
+  body.appendChild(subG);body.appendChild(guessGrid(g.id));
+  row.onclick=()=>{expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
+  card.append(row,body);
+  return card;
+}
+function buildGeral(){
+  // começa do acumulado anterior e soma os jogos com resultado palpitados aqui
+  const totals={};PLAYERS.forEach(p=>totals[p]=(BASELINE[p]||0));
+  GAMES.forEach(g=>{
+    if(classify(g)==="upcoming")return;const[ra,rb]=res(g);const live=classify(g)==="live";
+    PLAYERS.forEach(p=>{const r=pts((GUESS[g.id]||{})[p],ra,rb,live);if(r.p!=null)totals[p]+=r.p;});
+  });
+  // colocação anterior (só acumulado) x atual (acumulado + jogos daqui) -> movimento
+  const basePos={};
+  compRanks(PLAYERS.map(p=>({p,v:BASELINE[p]||0})).sort((a,b)=>b.v-a.v),r=>r.v).forEach(r=>basePos[r.p]=r.rank);
+  const rows=PLAYERS.map(p=>({p,t:totals[p]})).sort((a,b)=>b.t-a.t);
+  compRanks(rows,r=>r.t);
+  const card=document.createElement("div");card.className="card geral";
+  const sub=document.createElement("p");sub.className="sub";sub.textContent="Acumulado das rodadas anteriores + jogos palpitados aqui · movimento vs. o acumulado";
+  card.appendChild(sub);
+  rows.forEach(r=>{
+    const mv=basePos[r.p]-r.rank; // + = subiu
+    const move=mv>0?`<span class="move up">▲${mv}</span>`:mv<0?`<span class="move down">▼${-mv}</span>`:`<span class="move flat">–</span>`;
+    const d=document.createElement("div");d.className="rank"+(r.rank===1?" leader":"");
+    d.innerHTML=`<span class="pos">${r.rank}</span><span class="who">${r.p}</span>${move}<span class="pts">${r.t}</span>`;
+    card.appendChild(d);
+  });
+  return card;
+}
+
+function render(){
+  const live=GAMES.filter(g=>classify(g)==="live").sort((a,b)=>kickParts(a).ts-kickParts(b).ts);
+  const soon=GAMES.filter(g=>classify(g)==="upcoming").sort((a,b)=>kickParts(a).ts-kickParts(b).ts).slice(0,3);
+  lastSig=sig(live,soon);
+  refs={};
+  const app=document.getElementById("app");app.innerHTML="";
+
+  // AO VIVO
+  const tLive=document.createElement("div");tLive.className="sectitle";
+  tLive.innerHTML=live.length?`<span class="pulse"></span> Ao vivo agora`:`Ao vivo agora`;
+  app.appendChild(tLive);
+  if(live.length){live.forEach(g=>app.appendChild(buildLiveCard(g)));}
+  else{const e=document.createElement("div");e.className="empty";e.innerHTML="<b>Nenhum jogo rolando agora.</b><br>Assim que apitar, ele aparece aqui pronto pro palpite.";app.appendChild(e);}
+
+  // PRÓXIMOS 3
+  if(soon.length){
+    const tSoon=document.createElement("div");tSoon.className="sectitle";tSoon.innerHTML="⏱️ Próximos jogos";
+    app.appendChild(tSoon);
+    soon.forEach(g=>app.appendChild(buildSoonCard(g)));
+  }
+
+  // GERAL
+  const tGer=document.createElement("div");tGer.className="sectitle";tGer.textContent="Classificação geral";
+  app.appendChild(tGer);app.appendChild(buildGeral());
+}
+
+function refreshDynamic(){
+  // atualiza placares/cronômetro/ranking dos cards ao vivo sem reconstruir inputs, e o geral
+  GAMES.forEach(g=>{
+    const r=refs[g.id];if(!r)return;
+    const c=classify(g);const[ra,rb]=res(g);
+    if(r.scoreEl&&ra!=null)r.scoreEl.innerHTML=`<span class="s">${ra}</span><span class="x">:</span><span class="s">${rb}</span>`;
+    if(r.chip){
+      if(c==="live"){r.chip.className="chip live";r.chip.innerHTML=`<span class="hb"></span> Ao vivo · <span class="lm">${liveTxt(g)}</span>`;}
+      else if(c==="finished"){r.chip.className="chip done";r.chip.textContent="Encerrado";}
+    }
+    if(r.listEl&&!inputFocused())renderUnified(r.listEl,g);
+  });
+  refreshGeral();
+}
+
+function setConn(stateName,txt){
+  const c=document.getElementById("conn");c.className="conn "+stateName;
+  document.getElementById("connTxt").textContent=txt;
+}
+function stamp(){
+  if(lastOk)document.getElementById("updated").textContent="atualizado "+new Date(lastOk).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+(sb?" · compartilhado":" · local");
+}
+
+async function tick(initial){
+  try{
+    const games=await fetchGames();
+    GAMES=games;lastOk=Date.now();
+    if(sb)await supaPull();
+    stamp();
+    const anyLive=games.some(g=>classify(g)==="live");
+    setConn(anyLive?"live":"ok",anyLive?"Ao vivo":"Conectado");
+    const live=games.filter(g=>classify(g)==="live").sort((a,b)=>kickParts(a).ts-kickParts(b).ts);
+    const soon=games.filter(g=>classify(g)==="upcoming").sort((a,b)=>kickParts(a).ts-kickParts(b).ts).slice(0,3);
+    const newSig=sig(live,soon);
+    if(initial||newSig!==lastSig){
+      if(inputFocused()&&!initial){refreshDynamic();} // não reconstrói enquanto digita
+      else render();
+    }else{
+      refreshDynamic();
+    }
+  }catch(e){
+    setConn("off","Sem conexão com o ao vivo");
+    if(initial){
+      const app=document.getElementById("app");
+      app.innerHTML='<div class="empty"><b>Não consegui alcançar o feed ao vivo.</b><br>Se você está vendo isto na prévia do Claude, baixe o arquivo e abra direto no navegador — lá a conexão funciona. Vou seguir tentando.</div>';
+    }
+  }
+}
+
+document.getElementById("refresh").onclick=()=>{setConn("","Atualizando…");tick(false);};
+tick(true);
+setInterval(()=>tick(false),30000);
+</script>
+</body>
+</html>
