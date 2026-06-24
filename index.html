@@ -124,6 +124,12 @@
   .soonbody{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
   .card.open .soonbody{display:block}
 
+  /* histórico (partidas encerradas) */
+  .soonrow .vs .res{font-family:var(--display);font-weight:800;font-size:21px;color:var(--ink);letter-spacing:.02em;padding:0 4px;white-space:nowrap}
+  .soonrow .when.past{color:var(--muted)}
+  .urow .scorestat{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink);text-align:center;white-space:nowrap}
+  .urow .scorestat.none{color:var(--muted-2);font-size:12px;font-family:var(--body);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
   .geral .rank .pts{color:var(--ink)}
   .empty{color:var(--muted-2);font-size:13.5px;text-align:center;padding:26px 14px;background:var(--panel-2);border:1px dashed var(--line);border-radius:var(--radius)}
   .empty b{color:var(--ink)}
@@ -154,7 +160,6 @@
 
   <footer>
     Placar ao vivo via API pública aberta <code>worldcup26.ir</code> · atualiza sozinho a cada 30s.<br>
-    Se ficar "sem conexão" (a prévia do Claude às vezes bloqueia chamadas externas): baixe o arquivo e abra direto no navegador.
   </footer>
 </div>
 
@@ -236,11 +241,18 @@ function res(g){ // resultado atual (home,away) ou null
   const c=classify(g);if(c==="upcoming")return[null,null];
   return[parseInt(g.home_score)||0,parseInt(g.away_score)||0];
 }
-function kickParts(g){ // "MM/DD/YYYY HH:MM" -> {ts, label}
+// O feed entrega local_date no fuso da sede dos EUA (horário do leste / EDT = UTC-4 durante a Copa).
+// Convertendo para o horário de Brasília (UTC-3, sem horário de verão) => +1h o torneio inteiro.
+const SRC_OFFSET=-4;  // UTC-4 (sede, horário do leste dos EUA em junho/julho)
+const BRT_OFFSET=-3;  // UTC-3 (Brasília)
+function kickParts(g){ // "MM/DD/YYYY HH:MM" (fuso da sede) -> {ts: instante UTC real, d, h em Brasília}
   const m=String(g.local_date||"").match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
   if(!m)return{ts:0,d:"",h:g.local_date||""};
   const[,mo,da,yr,hh,mi]=m;
-  return{ts:new Date(+yr,+mo-1,+da,+hh,+mi).getTime(),d:`${da}/${mo}`,h:`${hh}:${mi}`};
+  const utc=Date.UTC(+yr,+mo-1,+da,+hh,+mi)-SRC_OFFSET*3600000; // relógio da sede -> instante UTC
+  const b=new Date(utc+BRT_OFFSET*3600000);                     // relógio de Brasília (lido via getUTC*)
+  const pad=n=>String(n).padStart(2,"0");
+  return{ts:utc,d:`${pad(b.getUTCDate())}/${pad(b.getUTCMonth()+1)}`,h:`${pad(b.getUTCHours())}:${pad(b.getUTCMinutes())}`};
 }
 function liveTxt(g){
   const e=String(g.time_elapsed||"");
@@ -313,7 +325,62 @@ function renderUnified(listEl,g){
 }
 function refreshGeral(){const c=document.querySelectorAll("#app .geral");if(c.length)c[c.length-1].replaceWith(buildGeral());}
 
+// algum jogador já registrou palpite (no banco/local) para este jogo?
+function hasAnyGuess(gid){const m=GUESS[gid];if(!m)return false;
+  return PLAYERS.some(p=>{const x=m[p];return x&&x.a!==""&&x.a!=null&&x.b!==""&&x.b!=null;});}
+
+// lista de palpites + pontos, somente leitura (partida já encerrada)
+function renderHistoryList(listEl,g){
+  listEl.innerHTML="";
+  const[ra,rb]=res(g);
+  const rows=PLAYERS.map(name=>{
+    const gx=(GUESS[g.id]||{})[name]||{a:"",b:""};
+    const r=pts(gx,ra,rb,false);
+    return{name,pt:r.p,k:r.k,l:r.l,a:gx.a,b:gx.b};
+  });
+  rows.sort((x,y)=>(y.pt??-1)-(x.pt??-1));
+  compRanks(rows,r=>(r.pt??-1));
+  const top=rows.length?rows[0].pt:0;
+  rows.forEach(r=>{
+    const has=r.a!==""&&r.a!=null&&r.b!==""&&r.b!=null;
+    const row=document.createElement("div");
+    row.className="urow "+r.k+((r.pt!=null&&r.pt===top&&top>0&&r.rank===1)?" leader":"");
+    const posEl=document.createElement("span");posEl.className="pos";posEl.textContent=r.rank;
+    const whoEl=document.createElement("span");whoEl.className="who";whoEl.textContent=r.name;
+    const scoreEl=document.createElement("span");scoreEl.className="scorestat"+(has?"":" none");
+    scoreEl.textContent=has?`${r.a} × ${r.b}`:"sem palpite";
+    const badgeEl=document.createElement("span");badgeEl.className="badge";badgeEl.textContent=has?r.l:"";
+    const ptsEl=document.createElement("span");ptsEl.className="pts";ptsEl.textContent=r.pt==null?"–":"+"+r.pt;
+    row.append(posEl,whoEl,scoreEl,badgeEl,ptsEl);
+    listEl.appendChild(row);
+  });
+}
+function buildHistoryCard(g){
+  const k=kickParts(g);const[ra,rb]=res(g);const key="h"+g.id;
+  const card=document.createElement("div");card.className="card"+(expanded[key]?" open":"");
+  const row=document.createElement("div");row.className="soonrow";
+  row.innerHTML=`
+    <span class="clock">🏁</span>
+    <span class="vs">
+      <img src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t">${nm(+g.home_team_id)}</span>
+      <span class="res">${ra} × ${rb}</span>
+      <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
+    </span>
+    <span class="when past">${k.d}<small>grupo ${g.group||"-"}</small></span>
+    <span class="caret">▼</span>`;
+  const body=document.createElement("div");body.className="soonbody";
+  const subH=document.createElement("p");subH.className="sub";subH.textContent="Palpites & pontos da partida";
+  const listEl=document.createElement("div");listEl.className="ulist";
+  renderHistoryList(listEl,g);
+  body.appendChild(subH);body.appendChild(listEl);
+  histRefs[g.id]=listEl;
+  row.onclick=()=>{expanded[key]=!expanded[key];card.classList.toggle("open");};
+  card.append(row,body);
+  return card;
+}
+
 let refs={}; // gid -> {scoreEl, chipEl, rankEl}
+let histRefs={}; // gid -> listEl (cards de histórico)
 function buildLiveCard(g){
   const live=classify(g)==="live";
   const[ra,rb]=res(g);
@@ -364,19 +431,27 @@ function buildSoonCard(g){
   return card;
 }
 function buildGeral(){
-  // começa do acumulado anterior e soma os jogos com resultado palpitados aqui
-  const totals={};PLAYERS.forEach(p=>totals[p]=(BASELINE[p]||0));
+  // baseT = como estava ANTES dos jogos de agora (acumulado + tudo que já encerrou)
+  const baseT={};PLAYERS.forEach(p=>baseT[p]=(BASELINE[p]||0));
   GAMES.forEach(g=>{
-    if(classify(g)==="upcoming")return;const[ra,rb]=res(g);const live=classify(g)==="live";
-    PLAYERS.forEach(p=>{const r=pts((GUESS[g.id]||{})[p],ra,rb,live);if(r.p!=null)totals[p]+=r.p;});
+    if(classify(g)!=="finished")return;const[ra,rb]=res(g);
+    PLAYERS.forEach(p=>{const r=pts((GUESS[g.id]||{})[p],ra,rb,false);if(r.p!=null)baseT[p]+=r.p;});
   });
-  // colocação anterior (só acumulado) x atual (acumulado + jogos daqui) -> movimento
+  // totals = AGORA (baseT + o que está rolando ao vivo)
+  const totals={};PLAYERS.forEach(p=>totals[p]=baseT[p]);
+  let anyLive=false;
+  GAMES.forEach(g=>{
+    if(classify(g)!=="live")return;anyLive=true;const[ra,rb]=res(g);
+    PLAYERS.forEach(p=>{const r=pts((GUESS[g.id]||{})[p],ra,rb,true);if(r.p!=null)totals[p]+=r.p;});
+  });
+  // posição antes dos jogos ao vivo x agora -> setas em tempo real (paradas quando não há jogo ao vivo)
   const basePos={};
-  compRanks(PLAYERS.map(p=>({p,v:BASELINE[p]||0})).sort((a,b)=>b.v-a.v),r=>r.v).forEach(r=>basePos[r.p]=r.rank);
+  compRanks(PLAYERS.map(p=>({p,v:baseT[p]})).sort((a,b)=>b.v-a.v),r=>r.v).forEach(r=>basePos[r.p]=r.rank);
   const rows=PLAYERS.map(p=>({p,t:totals[p]})).sort((a,b)=>b.t-a.t);
   compRanks(rows,r=>r.t);
   const card=document.createElement("div");card.className="card geral";
-  const sub=document.createElement("p");sub.className="sub";sub.textContent="Acumulado das rodadas anteriores + jogos palpitados aqui · movimento vs. o acumulado";
+  const sub=document.createElement("p");sub.className="sub";
+  sub.textContent=anyLive?"Classificação ao vivo · setas = movimento desde antes dos jogos de agora":"Classificação atual · sem jogos ao vivo no momento";
   card.appendChild(sub);
   rows.forEach(r=>{
     const mv=basePos[r.p]-r.rank; // + = subiu
@@ -392,7 +467,7 @@ function render(){
   const live=GAMES.filter(g=>classify(g)==="live").sort((a,b)=>kickParts(a).ts-kickParts(b).ts);
   const soon=GAMES.filter(g=>classify(g)==="upcoming").sort((a,b)=>kickParts(a).ts-kickParts(b).ts).slice(0,3);
   lastSig=sig(live,soon);
-  refs={};
+  refs={};histRefs={};
   const app=document.getElementById("app");app.innerHTML="";
 
   // AO VIVO
@@ -412,6 +487,16 @@ function render(){
   // GERAL
   const tGer=document.createElement("div");tGer.className="sectitle";tGer.textContent="Classificação geral";
   app.appendChild(tGer);app.appendChild(buildGeral());
+
+  // HISTÓRICO (partidas encerradas com palpite registrado no banco)
+  const past=GAMES.filter(g=>classify(g)==="finished"&&hasAnyGuess(g.id))
+    .sort((a,b)=>kickParts(b).ts-kickParts(a).ts); // mais recente primeiro
+  const tHist=document.createElement("div");tHist.className="sectitle";tHist.innerHTML="🏁 Histórico de partidas";
+  app.appendChild(tHist);
+  if(past.length){past.forEach(g=>app.appendChild(buildHistoryCard(g)));}
+  else{const e=document.createElement("div");e.className="empty";
+    e.innerHTML="<b>Nenhuma partida no histórico ainda.</b><br>Assim que um jogo palpitado encerrar, ele aparece aqui com os pontos de cada um.";
+    app.appendChild(e);}
 }
 
 function refreshDynamic(){
@@ -426,6 +511,7 @@ function refreshDynamic(){
     }
     if(r.listEl&&!inputFocused())renderUnified(r.listEl,g);
   });
+  Object.keys(histRefs).forEach(gid=>{const g=GAMES.find(x=>String(x.id)===String(gid));if(g)renderHistoryList(histRefs[gid],g);});
   refreshGeral();
 }
 
@@ -458,7 +544,7 @@ async function tick(initial){
     setConn("off","Sem conexão com o ao vivo");
     if(initial){
       const app=document.getElementById("app");
-      app.innerHTML='<div class="empty"><b>Não consegui alcançar o feed ao vivo.</b><br>Se você está vendo isto na prévia do Claude, baixe o arquivo e abra direto no navegador — lá a conexão funciona. Vou seguir tentando.</div>';
+      app.innerHTML='<div class="empty"><b>Não consegui alcançar o feed ao vivo.</b></div>';
     }
   }
 }
