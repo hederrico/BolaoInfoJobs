@@ -174,6 +174,9 @@
   .gcard{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 11px}
   .ghead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
   .ghead .gname{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.05em}
+  .ghr{display:inline-flex;align-items:center;gap:8px}
+  .ghead .cardshare,.shead .cardshare{width:26px;height:26px;border-radius:8px}
+  .ghead .cardshare .ic,.shead .cardshare .ic{width:13px;height:13px}
   .gtable{width:100%;border-collapse:collapse;font-size:13px}
   .gtable th{font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-2);font-weight:700;padding:3px 3px 7px;text-align:center}
   .gtable th.l{text-align:left;padding-left:32px}
@@ -311,6 +314,11 @@
   .stk.ok{color:var(--green);border-color:rgba(31,181,122,.4);background:rgba(31,181,122,.08)}
   .stk.mid{color:var(--gold);border-color:rgba(230,180,80,.35);background:rgba(230,180,80,.07)}
   .stk.out{color:#E06A73;border-color:rgba(224,106,115,.35);background:rgba(224,106,115,.07)}
+  /* badges "o que está em jogo" sob o nome do time, no placar */
+  .team .stkmini{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:3px;max-width:100%}
+  .team .stkmini .stk{font-size:9px;padding:1px 5px;gap:2px}
+  .team .stkmini .stk i{opacity:.65}
+  .team .stkmini .stk b{font-size:10.5px}
 
   /* ===== mini classificação ao vivo (dentro do card) ===== */
   .livestand{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
@@ -351,8 +359,10 @@
   .shbox .shhd .ic{width:17px;height:17px;color:var(--green)}
   .shbox .shhd .x{margin-left:auto;cursor:pointer;color:var(--muted);background:none;border:none;font-size:22px;line-height:1;padding:0 4px}
   .shbox .shhd .x:hover{color:var(--ink)}
-  .shimgwrap{overflow:auto;padding:14px;background:var(--bg);flex:1 1 auto;min-height:0;display:flex;justify-content:center;align-items:flex-start}
+  .shimgwrap{overflow:auto;padding:14px;background:var(--bg);flex:1 1 auto;min-height:140px;position:relative;display:flex;justify-content:center;align-items:flex-start}
   .shimgwrap img{width:100%;height:auto;max-width:400px;border-radius:11px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .shimgwrap.loading::after{content:"";position:absolute;top:50%;left:50%;width:30px;height:30px;margin:-15px;border-radius:50%;
+    border:3px solid var(--line-2);border-top-color:var(--green);animation:ptspin .8s linear infinite}
   .shact{display:flex;gap:9px;padding:13px 16px;border-top:1px solid var(--line)}
   .shact button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:11px;
     font:inherit;font-weight:700;font-size:14px;cursor:pointer;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink)}
@@ -652,7 +662,7 @@ function buildHistoryCard(g){
   const shb=document.createElement("button");shb.className="cardshare wide";shb.type="button";
   shb.innerHTML=icon("share",14)+"Compartilhar partida";
   shb.onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
-    openShareModal(makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
+    openShareModal(()=>makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
   body.appendChild(shb);
   histRefs[g.id]=listEl;
   row.onclick=()=>{expanded[key]=!expanded[key];card.classList.toggle("open");};
@@ -675,21 +685,26 @@ function buildLiveCard(g){
   const shb=document.createElement("button");shb.className="cardshare";shb.type="button";
   shb.title="Compartilhar este painel";shb.innerHTML=icon("share",14);
   shb.onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
-    openShareModal(makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
+    openShareModal(()=>makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
   cr.appendChild(shb);
   chead.appendChild(cr);card.appendChild(chead);
 
+  // "o que está em jogo" embutido no placar: badges com as possibilidades sob cada nome
+  let stkHome="",stkAway="";
+  if(g.type==="group"&&g.group&&!groupAllFinished(g.group)){
+    const s=stakesCached(g.group,g);
+    if(s){stkHome=`<div class="stkmini">${stakeChipsHTML(s,g.home_team_id,true)}</div>`;
+          stkAway=`<div class="stkmini">${stakeChipsHTML(s,g.away_team_id,false)}</div>`;}
+  }
   const sl=document.createElement("div");sl.className="scoreline";
   const scoreEl=document.createElement("div");scoreEl.className="bigscore";
   scoreEl.innerHTML=`<span class="s">${ra}</span><span class="x">:</span><span class="s">${rb}</span>`;
   sl.innerHTML=`
-    <div class="team"><img src="${flag(+g.home_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.home_team_id)}</div></div>
+    <div class="team"><img src="${flag(+g.home_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.home_team_id)}</div>${stkHome}</div>
     <div></div>
-    <div class="team"><img src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.away_team_id)}</div></div>`;
+    <div class="team"><img src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.away_team_id)}</div>${stkAway}</div>`;
   sl.children[1].appendChild(scoreEl);
   card.appendChild(sl);
-
-  if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)card.appendChild(stk);}
 
   const sub=document.createElement("p");sub.className="sub";sub.textContent="Palpites & como tá a rodada";
   const listEl=document.createElement("div");listEl.className="ulist";
@@ -761,6 +776,10 @@ function buildGeral(){
     d.innerHTML=`<span class="pos">${r.rank}</span><span class="who">${r.p}</span>${move}<span class="pts">${r.t}</span>`;
     card.appendChild(d);
   });
+  const shb=document.createElement("button");shb.className="cardshare wide";shb.type="button";
+  shb.innerHTML=icon("share",14)+"Compartilhar classificação";
+  shb.onclick=()=>openShareModal(makeShareCanvas,"bolao-meli-geral.png","Classificação geral");
+  card.appendChild(shb);
   return card;
 }
 
@@ -897,7 +916,8 @@ function buildThirdsCard(){
   const rows=thirdsRanking();
   const card=document.createElement("div");card.className="gcard thirds";
   const gh=document.createElement("div");gh.className="ghead";
-  gh.innerHTML='<span class="gname">Melhores terceiros</span><span class="chip soon">8 vagas</span>';
+  gh.innerHTML='<span class="gname">Melhores terceiros</span><span class="ghr"><span class="chip soon">8 vagas</span><button class="cardshare" type="button" title="Compartilhar melhores terceiros">'+icon("share",13)+'</button></span>';
+  gh.querySelector(".cardshare").onclick=()=>openShareModal(makeThirdsCanvas,"melhores-terceiros.png","Melhores terceiros");
   card.appendChild(gh);
   const t=document.createElement("table");t.className="gtable";
   const hr=document.createElement("tr");hr.innerHTML='<th></th><th class="l">Seleção</th><th>Grupo</th><th>J</th><th>SG</th><th>P</th>';t.appendChild(hr);
@@ -925,7 +945,8 @@ function renderGroups(){
   GLETTERS().forEach(L=>{
     const card=document.createElement("div");card.className="gcard";
     const gh=document.createElement("div");gh.className="ghead";
-    gh.innerHTML=`<span class="gname">Grupo ${L}</span>${groupChip(L)}`;
+    gh.innerHTML=`<span class="gname">Grupo ${L}</span><span class="ghr">${groupChip(L)}<button class="cardshare" type="button" title="Compartilhar grupo ${L}">${icon("share",13)}</button></span>`;
+    gh.querySelector(".cardshare").onclick=()=>openShareModal(()=>makeGroupCanvas(L),`grupo-${L}.png`,"Grupo "+L);
     card.appendChild(gh);
     card.appendChild(buildStandTable(L,false,true));
     const lg=document.createElement("div");lg.className="glegend";
@@ -1209,7 +1230,9 @@ function renderScenarios(){
     const card=document.createElement("div");card.className="scard";
     const sh=document.createElement("div");sh.className="shead";
     const fin=groupAllFinished(L);
-    sh.innerHTML=`<span class="gname">Grupo ${L}</span>`+(fin?'<span class="chip done">Encerrado</span>':groupAnyLive(L)?'<span class="chip live"><span class="hb"></span> Ao vivo</span>':'<span class="chip soon">Em aberto</span>');
+    const chipHtml=fin?'<span class="chip done">Encerrado</span>':groupAnyLive(L)?'<span class="chip live"><span class="hb"></span> Ao vivo</span>':'<span class="chip soon">Em aberto</span>';
+    sh.innerHTML=`<span class="gname">Grupo ${L}</span><span class="ghr">${chipHtml}<button class="cardshare" type="button" title="Compartilhar cenários do grupo ${L}">${icon("share",13)}</button></span>`;
+    sh.querySelector(".cardshare").onclick=()=>openShareModal(()=>makeScenarioCanvas(L),`cenarios-grupo-${L}.png`,"Cenários · Grupo "+L);
     card.appendChild(sh);
     if(fin){card.appendChild(buildFinalStanding(L));}
     else{
@@ -1344,6 +1367,47 @@ function rankRows(){
   return PLAYERS.map(p=>({p,t:tot[p]})).sort((a,b)=>b.t-a.t);
 }
 function rrect(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath();}
+// ---- bandeiras no canvas (flagcdn manda Access-Control-Allow-Origin:* -> crossOrigin não suja o canvas) ----
+const _flagImg={};
+function loadFlag(id){return new Promise(res=>{
+  if(!id||!TEAMS[id]){res(null);return;}
+  const url=flag(id,80);
+  if(url in _flagImg){res(_flagImg[url]);return;}
+  const im=new Image();im.crossOrigin="anonymous";
+  im.onload=()=>{_flagImg[url]=im;res(im);};
+  im.onerror=()=>{_flagImg[url]=null;res(null);};
+  im.src=url;
+});}
+async function loadFlags(ids){
+  const u=[...new Set(ids.map(String).filter(id=>id&&id!=="0"))];
+  const arr=await Promise.all(u.map(id=>loadFlag(+id)));
+  const m={};u.forEach((id,i)=>m[id]=arr[i]);
+  return id=>m[String(id)]||null;
+}
+function drawFlag(x,im,X,Y,W,H){
+  if(!im){x.fillStyle="rgba(255,255,255,.06)";rrect(x,X,Y,W,H,3);x.fill();
+    x.strokeStyle="rgba(255,255,255,.1)";x.lineWidth=1;rrect(x,X,Y,W,H,3);x.stroke();return;}
+  x.save();rrect(x,X,Y,W,H,3);x.clip();
+  const ir=im.naturalWidth/im.naturalHeight,tr=W/H;let dw,dh,dx,dy;
+  if(ir>tr){dh=H;dw=H*ir;dx=X-(dw-W)/2;dy=Y;}else{dw=W;dh=W/ir;dx=X;dy=Y-(dh-H)/2;}
+  x.drawImage(im,dx,dy,dw,dh);x.restore();
+  x.strokeStyle="rgba(255,255,255,.18)";x.lineWidth=1;rrect(x,X,Y,W,H,3);x.stroke();
+}
+// ---- toolkit comum dos canvases ----
+function cvBase(W,H){const sc=2;const cv=document.createElement("canvas");cv.width=W*sc;cv.height=H*sc;
+  const x=cv.getContext("2d");x.scale(sc,sc);
+  const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,"#101a24");grd.addColorStop(1,"#0B0F14");
+  x.fillStyle=grd;x.fillRect(0,0,W,H);x.textBaseline="alphabetic";return {cv,x};}
+function cvBrand(x,W,P,sub,rightTxt,rightCol){
+  x.textAlign="left";x.font="800 25px 'Barlow Condensed','Arial Narrow',sans-serif";x.fillStyle="#EAF0F6";x.fillText("BOLÃO ",P,46);
+  const wb=x.measureText("BOLÃO ").width;x.fillStyle="#1FB57A";x.fillText("MELI",P+wb,46);
+  if(sub){x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";x.fillText(sub,P,67);}
+  if(rightTxt){x.font="700 12px Inter,Arial,sans-serif";x.textAlign="right";x.fillStyle=rightCol||"#8A98A8";x.fillText(rightTxt,W-P,46);x.textAlign="left";}
+}
+function cvFooter(x,W,H,txt){x.textAlign="center";x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText(txt||"Bolão MELI · Copa 2026",W/2,H-18);x.textAlign="left";}
+function cvLegend(x,X,Y,col,label){x.fillStyle=col;x.beginPath();x.arc(X+4,Y-4,4,0,7);x.fill();
+  x.fillStyle="#8A98A8";x.textAlign="left";x.font="600 11px Inter,Arial,sans-serif";x.fillText(label,X+13,Y);
+  return X+13+x.measureText(label).width+18;}
 function makeShareCanvas(){
   const rows=rankRows();const W=680,P=34,rowH=58,headH=146,footH=54,sc=2;
   const H=headH+rows.length*rowH+footH;
@@ -1379,65 +1443,233 @@ function makeShareCanvas(){
   x.textAlign="left";
   return cv;
 }
-// imagem de UMA partida: placar + palpites e pontos de cada jogador (sem flags, à prova de CORS)
-function makeMatchCanvas(g){
+// cores iguais às do painel (DOM): cravou=verde, vencedor=dourado, errou=cinza, pend=muted
+const PTCOL={cravou:"#1FB57A",vencedor:"#E6B450",errou:"#6B7785",pend:"#5d6b7a"};
+// imagem de UMA partida: placar (branco) + palpites/pontos coloridos + como está o grupo
+async function makeMatchCanvas(g){
   const[ra,rb]=res(g);const live=classify(g)==="live";const hasRes=ra!=null;
+  const isGroup=g.type==="group"&&!!g.group;
   const rows=PLAYERS.map(name=>{const gx=(GUESS[g.id]||{})[name]||{a:"",b:""};const r=pts(gx,ra,rb,live);
     return{name,gx,p:r.p,k:r.k,l:r.l};});
   if(hasRes)rows.sort((a,b)=>(b.p??-1)-(a.p??-1));
-  const W=680,P=34,sc=2,headH=212,rowH=46,footH=50;
-  const H=headH+rows.length*rowH+footH;
-  const cv=document.createElement("canvas");cv.width=W*sc;cv.height=H*sc;
-  const x=cv.getContext("2d");x.scale(sc,sc);
-  const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,"#101a24");grd.addColorStop(1,"#0B0F14");
-  x.fillStyle=grd;x.fillRect(0,0,W,H);
-  x.textBaseline="alphabetic";x.textAlign="left";
-  x.font="800 26px 'Barlow Condensed','Arial Narrow',sans-serif";x.fillStyle="#EAF0F6";x.fillText("BOLÃO ",P,50);
-  const wb=x.measureText("BOLÃO ").width;x.fillStyle="#1FB57A";x.fillText("MELI",P+wb,50);
-  x.font="700 13px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";
-  x.fillText(`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`,P,72);
-  const stTxt=live?("AO VIVO · "+liveTxt(g)):hasRes?"ENCERRADO":"A SEGUIR";
-  x.font="700 12px Inter,Arial,sans-serif";x.textAlign="right";x.fillStyle=live?"#FF4D5E":"#8A98A8";x.fillText(stTxt,W-P,50);
-  // linha do placar
-  const cy=148;
-  x.textAlign="left";x.font="800 30px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText(nm(+g.home_team_id),P,cy);
-  x.textAlign="right";x.fillText(nm(+g.away_team_id),W-P,cy);
-  x.textAlign="center";x.font="800 42px 'Barlow Condensed',sans-serif";x.fillStyle=live?"#FF4D5E":"#EAF0F6";
-  x.fillText(hasRes?`${ra} : ${rb}`:"vs",W/2,cy+4);
-  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,176);x.lineTo(W-P,176);x.stroke();
-  x.textAlign="left";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("PALPITES & PONTOS",P,198);
-  const COL={cravou:"#E6B450",vencedor:"#1FB57A",errou:"#E06A73",pend:"#5d6b7a"};
+  let sids=null,stand=null;
+  if(isGroup){sids=teamIdsOfGroup(g.group);stand=orderGroup(sids,groupResults(g.group,true));}
+  const W=680,P=34,headH=214,rowH=44,footH=46;
+  const standH=stand?(34+sids.length*34+10):0;
+  const H=headH+rows.length*rowH+standH+footH;
+  const F=await loadFlags([g.home_team_id,g.away_team_id].concat(sids||[]));
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`,
+    live?("AO VIVO · "+liveTxt(g)):hasRes?"ENCERRADO":"A SEGUIR",live?"#FF4D5E":"#8A98A8");
+  // bloco do placar: bandeira em cima, nome embaixo, placar branco no centro
+  const qx=[W*0.27,W*0.73],fw=58,fh=42,fy=90;
+  drawFlag(x,F(g.home_team_id),qx[0]-fw/2,fy,fw,fh);
+  drawFlag(x,F(g.away_team_id),qx[1]-fw/2,fy,fw,fh);
+  x.textAlign="center";x.font="800 22px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";
+  x.fillText(nm(+g.home_team_id),qx[0],fy+fh+24);
+  x.fillText(nm(+g.away_team_id),qx[1],fy+fh+24);
+  x.font="800 46px 'Barlow Condensed',sans-serif";x.fillStyle="#FFFFFF";
+  x.fillText(hasRes?`${ra} : ${rb}`:"x",W/2,fy+fh+8);
+  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,186);x.lineTo(W-P,186);x.stroke();
+  x.textAlign="left";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("PALPITES & PONTOS",P,206);
   rows.forEach((r,i)=>{
     const Y=headH+i*rowH,cyl=Y+rowH/2+5;
-    if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,Y+3,W-2*P+16,rowH-6,9);x.fill();}
+    if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,Y+2,W-2*P+16,rowH-4,9);x.fill();}
     x.textAlign="left";x.font="600 16px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";x.fillText(r.name,P,cyl);
     const has=r.gx.a!==""&&r.gx.a!=null&&r.gx.b!==""&&r.gx.b!=null;
     x.textAlign="center";x.font="700 19px 'Barlow Condensed',sans-serif";x.fillStyle=has?"#C7D0DA":"#5d6b7a";
     x.fillText(has?`${r.gx.a} × ${r.gx.b}`:"—",W/2,cyl);
-    x.textAlign="right";x.fillStyle=COL[r.k]||"#5d6b7a";x.font="700 13px Inter,Arial,sans-serif";
-    x.fillText(hasRes?(r.l.toUpperCase()+(r.p>0?"  +"+r.p:"  +0")):"aguardando",W-P,cyl);
+    x.textAlign="right";x.fillStyle=hasRes?(PTCOL[r.k]||"#5d6b7a"):"#5d6b7a";x.font="800 20px 'Barlow Condensed',sans-serif";
+    x.fillText(hasRes?(r.p>0?"+"+r.p:"0"):"—",W-P,cyl+1);
   });
-  x.textAlign="center";x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
-  x.fillText("Cravou +6 · Vencedor/empate +3 · Bolão MELI · Copa 2026",W/2,H-19);
-  x.textAlign="left";
+  if(stand){
+    let Y=headH+rows.length*rowH+8;
+    x.textAlign="left";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+    x.fillText(`COMO ESTÁ O GRUPO ${g.group}`+(groupAnyLive(g.group)?" · AO VIVO":""),P,Y+12);
+    x.textAlign="right";x.font="700 10px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+    x.fillText("J",W-P-92,Y+12);x.fillText("SG",W-P-50,Y+12);x.fillText("P",W-P,Y+12);
+    Y+=22;
+    stand.order.forEach((id,i)=>{
+      const r=stand.tab[id],ry=Y+i*34,cy=ry+22;
+      if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,ry+2,W-2*P+16,30,8);x.fill();}
+      const pc=i<2?"#1FB57A":i===2?"#E6B450":"#6B7785";
+      x.textAlign="left";x.font="800 15px 'Barlow Condensed',sans-serif";x.fillStyle=pc;x.fillText(String(i+1),P,cy);
+      drawFlag(x,F(id),P+16,ry+8,24,17);
+      x.font="600 14px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";x.fillText(nm(+id),P+50,cy);
+      const gd=(r.GD>0?"+":"")+r.GD;
+      x.textAlign="right";x.font="700 14px 'Barlow Condensed',sans-serif";x.fillStyle="#C7D0DA";
+      x.fillText(String(r.J),W-P-92,cy);x.fillText(gd,W-P-50,cy);
+      x.font="800 16px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText(String(r.P),W-P,cy);
+    });
+  }
+  cvFooter(x,W,H,"Cravou +6 · Vencedor/empate +3 · Bolão MELI");
   return cv;
 }
-// ---- modal de prévia: gera PNG, mostra (com altura controlada), permite baixar/compartilhar ----
+// imagem de UM grupo (aba Grupos): tabela completa J V E D SG P + status
+async function makeGroupCanvas(L){
+  const ids=teamIdsOfGroup(L);const {order,tab}=orderGroup(ids,groupResults(L,true));const st=teamStatus(L);
+  const F=await loadFlags(ids);
+  const live=groupAnyLive(L),fin=groupAllFinished(L);
+  const W=680,P=34,headH=124,rowH=44,footH=60;
+  const H=headH+order.length*rowH+footH;
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,"CLASSIFICAÇÃO · COPA 2026",live?"AO VIVO":fin?"ENCERRADO":"EM ANDAMENTO",live?"#FF4D5E":"#8A98A8");
+  x.textAlign="left";x.font="800 30px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText("Grupo "+L,P,110);
+  const cP=W-P,cSG=W-P-42,cD=W-P-84,cE=W-P-120,cV=W-P-156,cJ=W-P-194;
+  x.textAlign="right";x.font="700 10px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+  [["P",cP],["SG",cSG],["D",cD],["E",cE],["V",cV],["J",cJ]].forEach(([t,c])=>x.fillText(t,c,headH-8));
+  order.forEach((id,i)=>{
+    const r=tab[id],ry=headH+i*rowH,cy=ry+rowH/2+5;
+    if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,ry+2,W-2*P+16,rowH-4,9);x.fill();}
+    const pc=i<2?"#1FB57A":i===2?"#E6B450":"#6B7785";
+    x.textAlign="left";x.font="800 17px 'Barlow Condensed',sans-serif";x.fillStyle=pc;x.fillText(String(i+1),P,cy);
+    drawFlag(x,F(id),P+18,ry+rowH/2-9,26,18);
+    x.font="600 15px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";const nameX=P+54;x.fillText(nm(+id),nameX,cy);
+    const stt=st[id];
+    if(stt==="classificado"||stt==="classificando"||stt==="eliminado"){
+      const w=Math.min(x.measureText(nm(+id)).width,150);
+      const dc=stt==="classificado"?"#1FB57A":stt==="classificando"?"#E6B450":"#6B7785";
+      x.fillStyle=dc;x.beginPath();x.arc(nameX+w+10,cy-5,3.5,0,7);x.fill();
+    }
+    x.textAlign="right";x.font="700 14px 'Barlow Condensed',sans-serif";x.fillStyle="#C7D0DA";
+    const gd=(r.GD>0?"+":"")+r.GD;
+    x.fillText(String(r.J),cJ,cy);x.fillText(String(r.W),cV,cy);x.fillText(String(r.D),cE,cy);x.fillText(String(r.L),cD,cy);x.fillText(gd,cSG,cy);
+    x.font="800 17px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText(String(r.P),cP,cy);
+  });
+  const ly=headH+order.length*rowH+22;let lx=P;
+  lx=cvLegend(x,lx,ly,"#1FB57A","Classificado");
+  lx=cvLegend(x,lx,ly,"#E6B450","3º / repescagem");
+  lx=cvLegend(x,lx,ly,"#6B7785","Eliminado");
+  cvFooter(x,W,H,"Bolão MELI · Copa 2026");
+  return cv;
+}
+// imagem dos melhores terceiros (aba Grupos)
+async function makeThirdsCanvas(){
+  const rows=thirdsRanking();const F=await loadFlags(rows.map(r=>r.id));
+  const W=680,P=34,headH=124,rowH=40,footH=58;const H=headH+rows.length*rowH+footH;
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,"COPA 2026 · OS 8 MELHORES AVANÇAM","",null);
+  x.textAlign="left";x.font="800 28px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText("Melhores terceiros",P,110);
+  const cP=W-P,cSG=W-P-44,cJ=W-P-88,cG=W-P-130;
+  x.textAlign="right";x.font="700 10px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+  [["P",cP],["SG",cSG],["J",cJ],["GRP",cG]].forEach(([t,c])=>x.fillText(t,c,headH-8));
+  rows.forEach((r,i)=>{
+    const ry=headH+i*rowH,cy=ry+rowH/2+5,q=r.q;
+    if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,ry+2,W-2*P+16,rowH-4,8);x.fill();}
+    x.textAlign="left";x.font="800 15px 'Barlow Condensed',sans-serif";x.fillStyle=q?"#1FB57A":"#6B7785";x.fillText(String(i+1),P,cy);
+    drawFlag(x,F(r.id),P+18,ry+rowH/2-8,24,16);
+    x.font="600 14px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";x.fillText(nm(+r.id),P+50,cy);
+    x.textAlign="right";x.font="700 13px 'Barlow Condensed',sans-serif";x.fillStyle="#C7D0DA";
+    x.fillText(r.L,cG,cy);x.fillText(String(r.J),cJ,cy);x.fillText((r.GD>0?"+":"")+r.GD,cSG,cy);
+    x.font="800 16px 'Barlow Condensed',sans-serif";x.fillStyle=q?"#1FB57A":"#EAF0F6";x.fillText(String(r.P),cP,cy);
+  });
+  const sepY=headH+8*rowH;x.strokeStyle="rgba(31,181,122,.45)";x.lineWidth=1.5;x.setLineDash([5,4]);
+  x.beginPath();x.moveTo(P,sepY);x.lineTo(W-P,sepY);x.stroke();x.setLineDash([]);
+  cvFooter(x,W,H,"Linha tracejada = corte das 8 vagas · Bolão MELI");
+  return cv;
+}
+// imagem dos cenários de UM grupo (aba Cenários)
+async function makeScenarioCanvas(L){
+  const ids=teamIdsOfGroup(L);const F=await loadFlags(ids);
+  const W=680,P=34;
+  if(groupAllFinished(L)){
+    const {order}=orderGroup(ids,groupResults(L,true));
+    const rowH=52,headH=124,footH=48;const H=headH+order.length*rowH+footH;
+    const {cv,x}=cvBase(W,H);
+    cvBrand(x,W,P,"CENÁRIOS · COPA 2026","ENCERRADO",null);
+    x.textAlign="left";x.font="800 27px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText("Grupo "+L+" · final",P,110);
+    order.forEach((id,i)=>{
+      const ry=headH+i*rowH,cy=ry+rowH/2+5,pc=i<2?"#1FB57A":i===2?"#E6B450":"#6B7785";
+      if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,ry+2,W-2*P+16,rowH-4,9);x.fill();}
+      x.textAlign="left";x.font="800 20px 'Barlow Condensed',sans-serif";x.fillStyle=pc;x.fillText((i+1)+"º",P,cy);
+      drawFlag(x,F(id),P+42,ry+rowH/2-13,36,26);
+      x.font="700 17px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";x.fillText(nm(+id),P+92,cy);
+      x.textAlign="right";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle=pc;
+      x.fillText(i<2?"CLASSIFICADO":i===2?"3º · REPESCAGEM":"ELIMINADO",W-P,cy);
+    });
+    cvFooter(x,W,H,"Bolão MELI · Copa 2026");return cv;
+  }
+  const s=scenarioCached(L);
+  return s.mode==="grid"?scenarioGridCanvas(L,s,F):scenarioAggCanvas(L,s,F);
+}
+function scenarioGridCanvas(L,s,F){
+  const W=680,P=26,nG=s.rem.length,gameColW=60,gx0=P,posX0=P+nG*gameColW+12;
+  const posColW=(W-P-posX0)/4,headH=120,rowsTop=headH+34,rowH=46,footH=46;
+  const H=rowsTop+s.rows.length*rowH+footH;
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,"CENÁRIOS · COMO O GRUPO PODE TERMINAR",groupAnyLive(L)?"AO VIVO":"EM ABERTO",groupAnyLive(L)?"#FF4D5E":"#8A98A8");
+  x.textAlign="left";x.font="800 26px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText("Grupo "+L,P,108);
+  s.rem.forEach((g,gi)=>{const cx=gx0+gi*gameColW+gameColW/2;
+    drawFlag(x,F(g.home_team_id),cx-21,headH-2,18,13);
+    x.textAlign="center";x.font="700 11px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("×",cx,headH+9);
+    drawFlag(x,F(g.away_team_id),cx+3,headH-2,18,13);});
+  ["1º","2º","3º","4º"].forEach((t,p)=>{const cx=posX0+p*posColW+posColW/2;
+    x.textAlign="center";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText(t,cx,headH+10);});
+  s.rows.forEach((r,i)=>{
+    const isCur=s.cur&&sameOutcomes(r.outs,s.cur.outs),ry=rowsTop+i*rowH,cy=ry+rowH/2;
+    if(isCur){x.fillStyle="rgba(230,180,80,.10)";rrect(x,P-6,ry+2,W-2*P+12,rowH-4,8);x.fill();
+      x.strokeStyle="#E6B450";x.lineWidth=2;rrect(x,P-6,ry+2,W-2*P+12,rowH-4,8);x.stroke();}
+    else if(i%2===0){x.fillStyle="rgba(255,255,255,.025)";rrect(x,P-6,ry+2,W-2*P+12,rowH-4,8);x.fill();}
+    s.rem.forEach((g,gi)=>{const cx=gx0+gi*gameColW+gameColW/2;
+      if(r.outs[gi]==="D"){x.textAlign="center";x.font="800 17px 'Barlow Condensed',sans-serif";x.fillStyle="#8A98A8";x.fillText("=",cx,cy+6);}
+      else{const id=r.outs[gi]==="H"?g.home_team_id:g.away_team_id;drawFlag(x,F(id),cx-13,cy-9,26,18);}});
+    for(let p=1;p<=4;p++){
+      const teams=r.positions[p]||[],cx=posX0+(p-1)*posColW,cnt=teams.length;if(!cnt)continue;
+      const fw=Math.max(13,Math.min(24,(posColW-6)/cnt)),fh=fw*0.72,totalW=cnt*fw+(cnt-1)*3;
+      let sx=cx+(posColW-totalW)/2;
+      teams.forEach(id=>{const isc=isCur&&s.cur.pos[p]&&String(s.cur.pos[p])===String(id);
+        drawFlag(x,F(id),sx,cy-fh/2,fw,fh);
+        if(isc){x.strokeStyle="#E6B450";x.lineWidth=2;rrect(x,sx-1,cy-fh/2-1,fw+2,fh+2,3);x.stroke();}
+        sx+=fw+3;});
+    }
+  });
+  cvFooter(x,W,H,"Contorno dourado = placar de agora · Bolão MELI");
+  return cv;
+}
+function scenarioAggCanvas(L,s,F){
+  const W=680,P=34,headH=126,footH=48,colW=(W-2*P)/4,fh=20,gap=8,bodyTop=headH+26;
+  const cols=[1,2,3,4].map(p=>s.positions[p]||[]);
+  const maxN=Math.max(1,...cols.map(c=>c.length));
+  const H=bodyTop+maxN*(fh+gap)+footH+8;
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,"CENÁRIOS · QUEM AINDA PODE TERMINAR ONDE",groupAnyLive(L)?"AO VIVO":"EM ABERTO",groupAnyLive(L)?"#FF4D5E":"#8A98A8");
+  x.textAlign="left";x.font="800 26px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText("Grupo "+L,P,108);
+  ["1º","2º","3º","4º"].forEach((t,p)=>{const cx=P+p*colW+colW/2;
+    x.textAlign="center";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText(t,cx,headH+12);});
+  cols.forEach((teams,p)=>{const cx=P+p*colW;
+    teams.forEach((id,j)=>{const fwd=30,ry=bodyTop+j*(fh+gap);drawFlag(x,F(id),cx+colW/2-fwd/2,ry,fwd,fh);});});
+  cvFooter(x,W,H,"Bolão MELI · Copa 2026");
+  return cv;
+}
+// HTML das 3 badges (V/E/P) de um time — usado no placar do card ao vivo
+function stakeChipsHTML(s,id,isHome){
+  const v=isHome?s.acc[id].H:s.acc[id].A,e=s.acc[id].D,d=isHome?s.acc[id].A:s.acc[id].H;
+  return `<span class="stk ${posClass(v)}"><i>V</i><b>${posLabel(v)}</b></span>`+
+    `<span class="stk ${posClass(e)}"><i>E</i><b>${posLabel(e)}</b></span>`+
+    `<span class="stk ${posClass(d)}"><i>P</i><b>${posLabel(d)}</b></span>`;
+}
+// ---- modal de prévia: builder pode ser canvas ou função (sync/async) que devolve canvas ----
 let _shBlob=null,_shName="bolao-meli.png";
-function openShareModal(canvas,filename,title){
+async function openShareModal(builder,filename,title){
   const m=document.getElementById("shmodal");if(!m)return;
   document.getElementById("shtitle").textContent=title||"Compartilhar";
   document.getElementById("shicon").innerHTML=ICONS.share||"";
   _shName=filename||"bolao-meli.png";
-  canvas.toBlob(blob=>{
-    if(!blob)return;_shBlob=blob;
-    const img=document.getElementById("shimg");
+  const wrap=document.querySelector(".shimgwrap"),img=document.getElementById("shimg");
+  const sb=document.getElementById("shshare"),dl=document.getElementById("shdl");
+  _shBlob=null;img.removeAttribute("src");sb.style.display="none";dl.disabled=true;
+  wrap.classList.add("loading");m.classList.add("open");m.setAttribute("aria-hidden","false");
+  let cv=null;
+  try{cv=typeof builder==="function"?await builder():builder;}catch(e){cv=null;}
+  if(!cv){wrap.classList.remove("loading");return;}
+  cv.toBlob(blob=>{
+    wrap.classList.remove("loading");
+    if(!blob)return;_shBlob=blob;dl.disabled=false;
     if(img._u)URL.revokeObjectURL(img._u);
     img._u=URL.createObjectURL(blob);img.src=img._u;
     let canFiles=false;try{canFiles=!!(navigator.canShare&&navigator.canShare({files:[new File([blob],_shName,{type:"image/png"})]}));}catch(e){}
-    const sb=document.getElementById("shshare");sb.style.display=canFiles?"":"none";
-    const dl=document.getElementById("shdl");dl.style.flex=canFiles?"1":"1 1 100%";
-    m.classList.add("open");m.setAttribute("aria-hidden","false");
+    sb.style.display=canFiles?"":"none";
+    dl.style.flex=canFiles?"1":"1 1 100%";
   },"image/png");
 }
 function closeShareModal(){const m=document.getElementById("shmodal");if(!m)return;m.classList.remove("open");m.setAttribute("aria-hidden","true");}
@@ -1453,7 +1685,7 @@ function doDownloadBlob(){
   const a=document.createElement("a");a.href=url;a.download=_shName;document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),4000);
 }
-function shareRanking(){openShareModal(makeShareCanvas(),"bolao-meli-geral.png","Classificação geral");}
+function shareRanking(){openShareModal(makeShareCanvas,"bolao-meli-geral.png","Classificação geral");}
 
 /* ===================== PULL-TO-REFRESH (mobile) ===================== */
 (function(){
