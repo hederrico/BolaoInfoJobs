@@ -251,6 +251,16 @@
   .scntab td.pcell{background:#0e151d}
   .scntab td.pcell .flags{display:inline-flex;gap:3px;flex-wrap:wrap;justify-content:center}
   .scntab td.pcell img{width:22px;height:16px;border-radius:3px;object-fit:cover}
+  /* cenário atual (placar de agora): contorna a linha inteira + fundo diferente */
+  .scntab tr.cur{box-shadow:0 0 0 2.5px var(--gold);border-radius:9px}
+  .scntab tr.cur td{background:#1c2737}
+  .scntab tr.cur td.win{background:#246b4d}
+  .scntab tr.cur td.pcell{background:#1a2638}
+  .scntab tr.cur td:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
+  .scntab tr.cur td:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
+  .aggp img.now{outline:2.5px solid var(--gold);outline-offset:1px}
+  .scnlegend{font-size:11.5px;color:var(--muted-2);line-height:1.5;margin:0 2px 14px;display:flex;align-items:flex-start;gap:7px}
+  .cur-dot{flex:0 0 auto;width:13px;height:13px;border-radius:4px;border:2px solid var(--gold);margin-top:1px}
   .scn.mini .scntab th{font-size:9px;padding:4px 1px}
   .scn.mini .scntab td{padding:3px 1px}
   .scn.mini .scntab td.pcell img{width:17px;height:13px}
@@ -275,14 +285,32 @@
   .qmark{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
     background:rgba(230,180,80,.16);border:1px solid rgba(230,180,80,.42);color:var(--gold)}
   .qmark .ic{width:9px;height:9px}
+  .qmark.ok{background:rgba(31,181,122,.16);border-color:rgba(31,181,122,.46);color:var(--green)}
+  .qmark.out{background:rgba(224,106,115,.14);border-color:rgba(224,106,115,.45);color:#E06A73}
   .thirdswrap{max-width:560px}
   .gcard.thirds .gtable td.tm .fx{max-width:none}
+  .statleg{display:flex;gap:14px;flex-wrap:wrap;margin:0 2px 16px;font-size:11.5px;color:var(--muted)}
+  .statleg>span{display:inline-flex;align-items:center;gap:6px}
   .cardscn{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
   .cardscn .scnhd{display:flex;align-items:center;gap:7px;cursor:pointer;color:var(--muted);font-weight:600;font-size:12.5px}
   .cardscn .scnhd .caret{margin-left:auto;color:var(--muted-2);font-size:11px;transition:transform .2s}
   .cardscn.open .scnhd .caret{transform:rotate(180deg)}
   .cardscn .scnbody{display:none;margin-top:11px}
   .cardscn.open .scnbody{display:block}
+  /* "O que está em jogo" — 1 linha por time, bem compacto */
+  .stakes{margin-top:13px;padding-top:11px;border-top:1px solid var(--line)}
+  .stakes .sub{margin-bottom:1px}
+  .stk-row{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:nowrap}
+  .stk-tm{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px;flex:1 1 auto;min-width:0}
+  .stk-tm img{width:20px;height:14px;border-radius:2px;object-fit:cover;flex:none}
+  .stk-tm span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stk-chips{display:inline-flex;align-items:center;gap:4px;flex:none}
+  .stk{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);padding:2px 7px;border-radius:999px;white-space:nowrap}
+  .stk i{font-style:normal;opacity:.7}
+  .stk b{font-family:var(--display);font-weight:800;font-size:12px}
+  .stk.ok{color:var(--green);border-color:rgba(31,181,122,.4);background:rgba(31,181,122,.08)}
+  .stk.mid{color:var(--gold);border-color:rgba(230,180,80,.35);background:rgba(230,180,80,.07)}
+  .stk.out{color:#E06A73;border-color:rgba(224,106,115,.35);background:rgba(224,106,115,.07)}
 
   /* ===== mini classificação ao vivo (dentro do card) ===== */
   .livestand{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
@@ -297,6 +325,48 @@
   .lst tr.q3 .pos{color:var(--gold)}
   .lst .gd{font-weight:700}
   .lst .pts{font-family:var(--display);font-weight:800;font-size:15px;color:var(--ink)}
+
+  /* botão compartilhar */
+  .statusbar button.hasic{display:inline-flex;align-items:center;gap:6px}
+  .statusbar button.hasic .ic{width:14px;height:14px}
+  .statusbar button#share{color:var(--green);border-color:rgba(31,181,122,.4)}
+  .statusbar button#share:hover{border-color:rgba(31,181,122,.7)}
+  .statusbar button:disabled{opacity:.6;cursor:default}
+
+  /* compartilhar por painel (botão no card) */
+  .cheadr{display:inline-flex;align-items:center;gap:9px;flex:none}
+  .cardshare{display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;border-radius:9px;
+    border:1px solid var(--line);background:var(--panel-2);color:var(--muted);cursor:pointer;padding:0;flex:none}
+  .cardshare:hover{color:var(--green);border-color:rgba(31,181,122,.45)}
+  .cardshare .ic{width:14px;height:14px;display:block}
+  .cardshare.wide{width:auto;height:auto;padding:8px 13px;gap:6px;font:inherit;font-size:12.5px;font-weight:600;margin-top:13px}
+
+  /* modal de prévia do compartilhamento (resolve o problema de altura) */
+  .shmodal{position:fixed;inset:0;z-index:130;background:rgba(4,7,10,.84);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;padding:16px}
+  .shmodal.open{display:flex}
+  .shbox{background:var(--panel);border:1px solid var(--line-2);border-radius:16px;width:100%;max-width:480px;
+    max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 26px 64px rgba(0,0,0,.6)}
+  .shbox .shhd{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line);font-weight:700;font-size:14.5px}
+  .shbox .shhd .ic{width:17px;height:17px;color:var(--green)}
+  .shbox .shhd .x{margin-left:auto;cursor:pointer;color:var(--muted);background:none;border:none;font-size:22px;line-height:1;padding:0 4px}
+  .shbox .shhd .x:hover{color:var(--ink)}
+  .shimgwrap{overflow:auto;padding:14px;background:var(--bg);flex:1 1 auto;min-height:0;display:flex;justify-content:center;align-items:flex-start}
+  .shimgwrap img{width:100%;height:auto;max-width:400px;border-radius:11px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .shact{display:flex;gap:9px;padding:13px 16px;border-top:1px solid var(--line)}
+  .shact button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px;border-radius:11px;
+    font:inherit;font-weight:700;font-size:14px;cursor:pointer;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink)}
+  .shact button:hover{border-color:var(--muted-2)}
+  .shact button.prim{background:var(--green);border-color:var(--green);color:#04130d}
+  .shact button .ic{width:16px;height:16px}
+
+  /* pull-to-refresh */
+  .ptr{position:fixed;top:-54px;left:calc(50% - 22px);z-index:90;width:44px;height:44px;border-radius:50%;
+    background:var(--panel);border:1px solid var(--line-2);display:grid;place-items:center;color:var(--green);
+    opacity:0;pointer-events:none;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+  .ptr .ic{width:22px;height:22px;display:block}
+  .ptr.spin .ic{animation:ptspin .8s linear infinite}
+  @keyframes ptspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -328,11 +398,21 @@
     <span class="sep">·</span>
     <span id="updated">—</span>
     <button id="refresh">Atualizar</button>
+    <button id="share" class="hasic"></button>
   </div>
 
   <nav class="tabs" id="tabs"></nav>
 
+  <div class="ptr" id="ptr"><span class="ic"></span></div>
   <div id="app"></div>
+
+  <div class="shmodal" id="shmodal" aria-hidden="true">
+    <div class="shbox">
+      <div class="shhd"><span class="ic" id="shicon"></span><span id="shtitle">Compartilhar</span><button class="x" id="shclose" aria-label="Fechar">×</button></div>
+      <div class="shimgwrap"><img id="shimg" alt="Prévia do compartilhamento"></div>
+      <div class="shact"><button id="shdl"></button><button id="shshare" class="prim"></button></div>
+    </div>
+  </div>
 
   <footer>
     Placar ao vivo via API pública aberta <code>worldcup26.ir</code> · atualiza sozinho a cada 30s.<br>
@@ -372,7 +452,9 @@ const ICONS={
   clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
   flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4.5h13l-2.5 4 2.5 4H5"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5v1.5A3 3 0 0 0 7 10.4M17 6h2.5v1.5A3 3 0 0 1 17 10.4M9.5 16h5M12 14v2M8.5 20h7M10 16.2c0 1.5-.5 2.6-1.5 3.8M14 16.2c0 1.5.5 2.6 1.5 3.8"/></svg>',
-  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg>'
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 6.5"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.4"/><circle cx="17.5" cy="6" r="2.4"/><circle cx="17.5" cy="18" r="2.4"/><path d="M8.1 11l7.3-3.8M8.1 13l7.3 3.8"/></svg>'
 };
 const icon=(name,sz)=>`<span class="ic" style="width:${sz||16}px;height:${sz||16}px">${ICONS[name]||""}</span>`;
 
@@ -567,6 +649,11 @@ function buildHistoryCard(g){
   const listEl=document.createElement("div");listEl.className="ulist";
   renderHistoryList(listEl,g);
   body.appendChild(subH);body.appendChild(listEl);
+  const shb=document.createElement("button");shb.className="cardshare wide";shb.type="button";
+  shb.innerHTML=icon("share",14)+"Compartilhar partida";
+  shb.onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
+    openShareModal(makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
+  body.appendChild(shb);
   histRefs[g.id]=listEl;
   row.onclick=()=>{expanded[key]=!expanded[key];card.classList.toggle("open");};
   card.append(row,body);
@@ -584,7 +671,13 @@ function buildLiveCard(g){
   const chip=document.createElement("span");
   chip.className="chip "+(live?"live":"done");
   chip.innerHTML=live?`<span class="hb"></span> Ao vivo · <span class="lm">${liveTxt(g)}</span>`:"Encerrado";
-  chead.appendChild(chip);card.appendChild(chead);
+  const cr=document.createElement("div");cr.className="cheadr";cr.appendChild(chip);
+  const shb=document.createElement("button");shb.className="cardshare";shb.type="button";
+  shb.title="Compartilhar este painel";shb.innerHTML=icon("share",14);
+  shb.onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
+    openShareModal(makeMatchCanvas(cur),`bolao-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
+  cr.appendChild(shb);
+  chead.appendChild(cr);card.appendChild(chead);
 
   const sl=document.createElement("div");sl.className="scoreline";
   const scoreEl=document.createElement("div");scoreEl.className="bigscore";
@@ -595,6 +688,8 @@ function buildLiveCard(g){
     <div class="team"><img src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.away_team_id)}</div></div>`;
   sl.children[1].appendChild(scoreEl);
   card.appendChild(sl);
+
+  if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)card.appendChild(stk);}
 
   const sub=document.createElement("p");sub.className="sub";sub.textContent="Palpites & como tá a rodada";
   const listEl=document.createElement("div");listEl.className="ulist";
@@ -630,6 +725,7 @@ function buildSoonCard(g){
   const body=document.createElement("div");body.className="soonbody";
   const subG=document.createElement("p");subG.className="sub";subG.textContent="Palpites (já deixa cravado)";
   body.appendChild(subG);body.appendChild(guessGrid(g.id));
+  if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)body.appendChild(stk);}
   const scn=cardScenarioSection(g.group);if(scn)body.appendChild(scn);
   row.onclick=()=>{expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
   card.append(row,body);
@@ -728,14 +824,14 @@ function orderGroup(ids,results){
 function buildStandTable(L,compact,includeLive){
   const ids=teamIdsOfGroup(L);
   const {order,tab}=orderGroup(ids,groupResults(L,includeLive));
-  const qt=qualThirdSet();
+  const st=teamStatus(L);
   const t=document.createElement("table");t.className=compact?"lst":"gtable";
   if(!compact){const hr=document.createElement("tr");
     hr.innerHTML='<th></th><th class="l">Seleção</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th><th>P</th>';t.appendChild(hr);}
   order.forEach((id,i)=>{
     const r=tab[id];const tr=document.createElement("tr");tr.className=i<2?"q1":i===2?"q3":"q4";
     const gd=(r.GD>0?"+":"")+r.GD;
-    const badge=(i===2&&qt.has(id))?`<span class="qmark" title="Classificando · entre os 8 melhores 3º">${icon("check",10)}</span>`:"";
+    const badge=statusBadge(st[id]);
     if(compact){
       tr.innerHTML=`<td class="pos">${i+1}</td><td class="tm"><span class="fx"><img src="${flag(+id,22)}" onerror="this.style.visibility='hidden'"><span class="nmt">${nm(+id)}</span>${badge}</span></td><td>${r.J}</td><td class="gd">${gd}</td><td class="pts">${r.P}</td>`;
     }else{
@@ -768,6 +864,35 @@ function thirdsRanking(){
   _thirds=rows;_thirdsSig=sig;return rows;
 }
 const qualThirdSet=()=>new Set(thirdsRanking().filter(r=>r.q).map(r=>r.id));
+// status matemático de cada seleção do grupo:
+//  classificado = garantido (top 2, ou 3º já dentro num grupo encerrado)
+//  eliminado    = sem chance (só pode terminar em 4º, ou 3º fora num grupo encerrado)
+//  classificando= ainda pode, e hoje está entre os 8 melhores 3º
+//  vivo         = ainda pode avançar
+function teamStatus(L){
+  const ids=teamIdsOfGroup(L);const qt=qualThirdSet();const out={};
+  if(groupAllFinished(L)){
+    const {order}=orderGroup(ids,groupResults(L,true));
+    // top-2 garantidos; 4º eliminado; 3º depende dos outros grupos -> provisório
+    order.forEach((id,i)=>{out[id]=i<2?"classificado":i===3?"eliminado":(qt.has(id)?"classificando":"vivo");});
+    return out;
+  }
+  const s=scenarioCached(L);const all={};ids.forEach(t=>all[t]=new Set());
+  if(s.mode==="grid")s.rows.forEach(r=>{for(let p=1;p<=4;p++)r.positions[p].forEach(t=>all[t].add(p));});
+  else if(s.mode==="agg"){for(let p=1;p<=4;p++)s.positions[p].forEach(t=>all[t].add(p));}
+  ids.forEach(t=>{const a=[...all[t]];
+    if(a.length&&a.every(p=>p<=2))out[t]="classificado";
+    else if(a.length&&a.every(p=>p>=4))out[t]="eliminado";
+    else if(qt.has(t))out[t]="classificando";
+    else out[t]="vivo";});
+  return out;
+}
+function statusBadge(status){
+  if(status==="classificado")return `<span class="qmark ok" title="Classificado">${icon("check",10)}</span>`;
+  if(status==="eliminado")return `<span class="qmark out" title="Eliminado">${icon("x",10)}</span>`;
+  if(status==="classificando")return `<span class="qmark" title="Classificando (entre os 8 melhores 3º)">${icon("check",10)}</span>`;
+  return "";
+}
 function buildThirdsCard(){
   const rows=thirdsRanking();
   const card=document.createElement("div");card.className="gcard thirds";
@@ -793,6 +918,9 @@ function renderGroups(){
   const ti=document.createElement("div");ti.className="sectitle";
   ti.innerHTML=(GAMES.some(g=>classify(g)==="live")?'<span class="pulse"></span> ':"")+"Classificação dos grupos";
   app.appendChild(ti);
+  const sl=document.createElement("div");sl.className="statleg";
+  sl.innerHTML=`<span><span class="qmark ok">${icon("check",9)}</span> Classificado</span><span><span class="qmark">${icon("check",9)}</span> Classificando (3º)</span><span><span class="qmark out">${icon("x",9)}</span> Eliminado</span>`;
+  app.appendChild(sl);
   const wrap=document.createElement("div");wrap.className="groups";
   GLETTERS().forEach(L=>{
     const card=document.createElement("div");card.className="gcard";
@@ -950,6 +1078,10 @@ function scenarioFor(L){
   const rem=groupGames(L).filter(g=>!isFin(g)).sort((a,b)=>kickParts(a).ts-kickParts(b).ts);
   if(rem.length===0)return {mode:"final",ids};
   const N=6;
+  // estado ATUAL (placar de agora): qual linha está ocorrendo + quem está em cada posição
+  const curRes=base.concat(rem.map(g=>[g.home_team_id,g.away_team_id,parseInt(g.home_score)||0,parseInt(g.away_score)||0]));
+  const curOrder=orderGroup(ids,curRes).order;const curPos={};curOrder.forEach((id,i)=>curPos[i+1]=id);
+  const cur={outs:rem.map(g=>{const a=parseInt(g.home_score)||0,b=parseInt(g.away_score)||0;return a>b?"H":a<b?"A":"D";}),pos:curPos,live:rem.some(g=>classify(g)==="live")};
   if(rem.length<=2){
     const rows=cartesian(rem.map(()=>["H","D","A"])).map(outs=>{
       const acc={};ids.forEach(t=>acc[t]=new Set());
@@ -961,7 +1093,7 @@ function scenarioFor(L){
       const positions={};for(let pp=1;pp<=4;pp++)positions[pp]=ids.filter(t=>acc[t].has(pp));
       return {outs,positions};
     });
-    return {mode:"grid",rem,ids,rows};
+    return {mode:"grid",rem,ids,rows,cur};
   }
   // rodadas anteriores: agrega todas as possibilidades por posição
   const n=rem.length<=3?4:(rem.length<=4?2:1);
@@ -973,18 +1105,61 @@ function scenarioFor(L){
     ids.forEach(t=>(p[t]||[]).forEach(x=>acc[t].add(x)));
   });
   const positions={};for(let pp=1;pp<=4;pp++)positions[pp]=ids.filter(t=>acc[t].has(pp));
-  return {mode:"agg",ids,positions,rem};
+  return {mode:"agg",ids,positions,rem,cur};
 }
+const sameOutcomes=(a,b)=>!!a&&!!b&&a.length===b.length&&a.every((x,i)=>x===b[i]);
 let scnCache={};
 const groupSig=L=>groupGames(L).map(g=>g.id+classify(g)+g.home_score+"-"+g.away_score).join("|");
 function scenarioCached(L){const s=groupSig(L);if(scnCache[L]&&scnCache[L].s===s)return scnCache[L].v;const v=scenarioFor(L);scnCache[L]={s,v};return v;}
+// "O que está em jogo": para o jogo g, as posições possíveis de cada um dos 2 times
+// conforme ESTE jogo termine em vitória/empate/derrota (marginalizando os outros jogos do grupo)
+function stakesFor(L,g){
+  const ids=teamIdsOfGroup(L);
+  const base=groupGames(L).filter(isFin).map(x=>[x.home_team_id,x.away_team_id,parseInt(x.home_score)||0,parseInt(x.away_score)||0]);
+  const rem=groupGames(L).filter(x=>!isFin(x)).sort((a,b)=>kickParts(a).ts-kickParts(b).ts);
+  const gi=rem.findIndex(x=>String(x.id)===String(g.id));
+  if(gi<0)return null;
+  const N=6;
+  const slLists=rem.map(()=>{const o=[];for(let h=0;h<=N;h++)for(let a=0;a<=N;a++)o.push([h,a]);return o;});
+  const home=g.home_team_id,away=g.away_team_id;
+  const acc={};[home,away].forEach(t=>acc[t]={H:new Set(),D:new Set(),A:new Set()});
+  cartesian(slLists).forEach(combo=>{
+    const res=base.concat(combo.map((sc,i)=>[rem[i].home_team_id,rem[i].away_team_id,sc[0],sc[1]]));
+    const gs=combo[gi];const oc=gs[0]>gs[1]?"H":gs[0]<gs[1]?"A":"D";
+    const pos=rankWithTies(ids,res);
+    [home,away].forEach(t=>(pos[t]||[]).forEach(p=>acc[t][oc].add(p)));
+  });
+  return {home,away,acc};
+}
+let stkCache={};
+function stakesCached(L,g){const k=L+":"+g.id,sig=groupSig(L);if(stkCache[k]&&stkCache[k].s===sig)return stkCache[k].v;const v=stakesFor(L,g);stkCache[k]={s:sig,v};return v;}
+const posLabel=set=>{const a=[...set].sort((x,y)=>x-y);return a.length?a.map(p=>p+"º").join("/"):"—";};
+const posClass=set=>{const a=[...set];if(!a.length)return "";if(a.every(p=>p<=2))return "ok";if(a.every(p=>p>=4))return "out";return "mid";};
+function buildStakes(L,g){
+  if(!L||groupAllFinished(L))return null;
+  const s=stakesCached(L,g);if(!s)return null;
+  const wrap=document.createElement("div");wrap.className="stakes";
+  const h=document.createElement("p");h.className="sub";h.textContent="O que está em jogo";wrap.appendChild(h);
+  [[g.home_team_id,true],[g.away_team_id,false]].forEach(([id,isHome])=>{
+    const v=isHome?s.acc[id].H:s.acc[id].A, e=s.acc[id].D, d=isHome?s.acc[id].A:s.acc[id].H;
+    const row=document.createElement("div");row.className="stk-row";
+    row.innerHTML=`<span class="stk-tm"><img src="${flag(+id,20)}" onerror="this.style.visibility='hidden'"><span>${nm(+id)}</span></span>`+
+      `<span class="stk-chips">`+
+      `<span class="stk ${posClass(v)}"><i>V</i><b>${posLabel(v)}</b></span>`+
+      `<span class="stk ${posClass(e)}"><i>E</i><b>${posLabel(e)}</b></span>`+
+      `<span class="stk ${posClass(d)}"><i>P</i><b>${posLabel(d)}</b></span>`+
+      `</span>`;
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
 function outcomeCell(g,o){
   if(o==="D")return '<td class="out draw"><span class="eq">=</span></td>';
   const id=o==="H"?g.home_team_id:g.away_team_id;
   return `<td class="out win"><img src="${flag(+id,20)}" title="${nm(+id)} vence" onerror="this.style.visibility='hidden'"></td>`;
 }
-function flagsCell(ids){
-  return `<td class="pcell"><span class="flags">${ids.map(id=>`<img src="${flag(+id,24)}" title="${nm(+id)}" onerror="this.style.visibility='hidden'">`).join("")}</span></td>`;
+function flagsCell(ids,hi){
+  return `<td class="pcell"><span class="flags">${ids.map(id=>`<img class="${hi&&String(id)===String(hi)?"now":""}" src="${flag(+id,24)}" title="${nm(+id)}" onerror="this.style.visibility='hidden'">`).join("")}</span></td>`;
 }
 function buildScenarioGrid(s){
   const t=document.createElement("table");t.className="scntab";
@@ -993,9 +1168,11 @@ function buildScenarioGrid(s){
   hh+='<th class="p1">1º</th><th class="p2">2º</th><th class="p3">3º</th><th class="p4">4º</th>';
   hr.innerHTML=hh;t.appendChild(hr);
   s.rows.forEach(r=>{
-    const tr=document.createElement("tr");let html="";
+    const isCur=s.cur&&sameOutcomes(r.outs,s.cur.outs);
+    const tr=document.createElement("tr");if(isCur)tr.className="cur";
+    let html="";
     s.rem.forEach((g,gi)=>html+=outcomeCell(g,r.outs[gi]));
-    for(let p=1;p<=4;p++)html+=flagsCell(r.positions[p]);
+    for(let p=1;p<=4;p++)html+=flagsCell(r.positions[p],isCur?s.cur.pos[p]:null);
     tr.innerHTML=html;t.appendChild(tr);
   });
   return t;
@@ -1013,8 +1190,9 @@ function buildFinalStanding(L){
 function buildAgg(s){
   const wrap=document.createElement("div");wrap.className="aggp";
   ["1º","2º","3º","4º"].forEach((lab,i)=>{
+    const hi=s.cur&&s.cur.pos[i+1];
     const c=document.createElement("div");c.className="ac";
-    c.innerHTML=`<div class="ah">${lab}</div><div class="af">${s.positions[i+1].map(id=>`<img src="${flag(+id,28)}" title="${nm(+id)}" onerror="this.style.visibility='hidden'">`).join("")}</div>`;
+    c.innerHTML=`<div class="ah">${lab}</div><div class="af">${s.positions[i+1].map(id=>`<img class="${hi&&String(id)===String(hi)?"now":""}" src="${flag(+id,28)}" title="${nm(+id)}" onerror="this.style.visibility='hidden'">`).join("")}</div>`;
     wrap.appendChild(c);
   });
   return wrap;
@@ -1022,6 +1200,11 @@ function buildAgg(s){
 function renderScenarios(){
   const app=document.getElementById("app");app.innerHTML="";
   const ti=document.createElement("div");ti.className="sectitle";ti.textContent="Cenários de classificação";app.appendChild(ti);
+  if(GLETTERS().some(L=>!groupAllFinished(L))){
+    const lg=document.createElement("div");lg.className="scnlegend";
+    lg.innerHTML='<span class="cur-dot"></span> A linha com contorno dourado é o cenário com o placar de agora — mostra quem fica em cada posição se terminar assim.';
+    app.appendChild(lg);
+  }
   GLETTERS().forEach(L=>{
     const card=document.createElement("div");card.className="scard";
     const sh=document.createElement("div");sh.className="shead";
@@ -1131,7 +1314,7 @@ async function tick(initial){
     const games=await fetchGames();
     GAMES=games;lastOk=Date.now();
     if(sb)await supaPull();
-    stamp();hideLoader();scnCache={};
+    stamp();hideLoader();
     const anyLive=games.some(g=>classify(g)==="live");
     setConn(anyLive?"live":"ok",anyLive?"Ao vivo":"Conectado");
     if(activeTab!=="bolao"){renderActive();return;}
@@ -1153,6 +1336,153 @@ async function tick(initial){
   }
 }
 
+/* ===================== COMPARTILHAR (print do painel) ===================== */
+function rankRows(){
+  const tot={};PLAYERS.forEach(p=>tot[p]=(BASELINE[p]||0));
+  GAMES.forEach(g=>{const c=classify(g);if(c!=="finished"&&c!=="live")return;const[ra,rb]=res(g);
+    PLAYERS.forEach(p=>{const r=pts((GUESS[g.id]||{})[p],ra,rb,c==="live");if(r.p!=null)tot[p]+=r.p;});});
+  return PLAYERS.map(p=>({p,t:tot[p]})).sort((a,b)=>b.t-a.t);
+}
+function rrect(x,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath();}
+function makeShareCanvas(){
+  const rows=rankRows();const W=680,P=34,rowH=58,headH=146,footH=54,sc=2;
+  const H=headH+rows.length*rowH+footH;
+  const cv=document.createElement("canvas");cv.width=W*sc;cv.height=H*sc;
+  const x=cv.getContext("2d");x.scale(sc,sc);
+  const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,"#101a24");grd.addColorStop(1,"#0B0F14");
+  x.fillStyle=grd;x.fillRect(0,0,W,H);
+  x.font="800 40px 'Barlow Condensed','Arial Narrow',sans-serif";x.textBaseline="alphabetic";
+  x.fillStyle="#EAF0F6";x.fillText("BOLÃO ",P,66);const wb=x.measureText("BOLÃO ").width;
+  x.fillStyle="#1FB57A";x.fillText("MELI",P+wb,66);
+  x.font="700 14px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";
+  x.fillText("COPA 2026 · CLASSIFICAÇÃO GERAL",P,90);
+  const when=lastOk?new Date(lastOk).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"";
+  x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("atualizado "+when,P,110);
+  const anyLive=GAMES.some(g=>classify(g)==="live");
+  if(anyLive){x.fillStyle="#FF4D5E";x.beginPath();x.arc(W-P-58,104,4,0,7);x.fill();
+    x.font="700 12px Inter,Arial,sans-serif";x.textAlign="left";x.fillText("AO VIVO",W-P-48,108);x.textAlign="left";}
+  rows.forEach((r,i)=>{
+    const Y=headH+i*rowH,lead=i===0,hh=rowH-10;
+    x.fillStyle=lead?"#172420":"#141A22";rrect(x,P,Y,W-2*P,hh,12);x.fill();
+    if(lead){x.strokeStyle="rgba(230,180,80,.55)";x.lineWidth=1.5;x.stroke();}
+    x.textAlign="center";x.font="800 22px 'Barlow Condensed',sans-serif";x.fillStyle=lead?"#E6B450":"#5d6b7a";
+    x.fillText(String(i+1),P+24,Y+hh/2+8);
+    x.textAlign="left";x.font="600 18px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";
+    x.fillText(r.p,P+56,Y+hh/2+7);
+    x.textAlign="right";x.font="800 26px 'Barlow Condensed',sans-serif";x.fillStyle=lead?"#E6B450":"#EAF0F6";
+    x.fillText(String(r.t),W-P-40,Y+hh/2+9);
+    x.font="600 11px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.textAlign="left";
+    x.fillText("pts",W-P-32,Y+hh/2+9);
+  });
+  x.textAlign="center";x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+  x.fillText("Cravou +6 · Vencedor/empate +3 · placar ao vivo da Copa 2026",W/2,H-20);
+  x.textAlign="left";
+  return cv;
+}
+// imagem de UMA partida: placar + palpites e pontos de cada jogador (sem flags, à prova de CORS)
+function makeMatchCanvas(g){
+  const[ra,rb]=res(g);const live=classify(g)==="live";const hasRes=ra!=null;
+  const rows=PLAYERS.map(name=>{const gx=(GUESS[g.id]||{})[name]||{a:"",b:""};const r=pts(gx,ra,rb,live);
+    return{name,gx,p:r.p,k:r.k,l:r.l};});
+  if(hasRes)rows.sort((a,b)=>(b.p??-1)-(a.p??-1));
+  const W=680,P=34,sc=2,headH=212,rowH=46,footH=50;
+  const H=headH+rows.length*rowH+footH;
+  const cv=document.createElement("canvas");cv.width=W*sc;cv.height=H*sc;
+  const x=cv.getContext("2d");x.scale(sc,sc);
+  const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,"#101a24");grd.addColorStop(1,"#0B0F14");
+  x.fillStyle=grd;x.fillRect(0,0,W,H);
+  x.textBaseline="alphabetic";x.textAlign="left";
+  x.font="800 26px 'Barlow Condensed','Arial Narrow',sans-serif";x.fillStyle="#EAF0F6";x.fillText("BOLÃO ",P,50);
+  const wb=x.measureText("BOLÃO ").width;x.fillStyle="#1FB57A";x.fillText("MELI",P+wb,50);
+  x.font="700 13px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";
+  x.fillText(`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`,P,72);
+  const stTxt=live?("AO VIVO · "+liveTxt(g)):hasRes?"ENCERRADO":"A SEGUIR";
+  x.font="700 12px Inter,Arial,sans-serif";x.textAlign="right";x.fillStyle=live?"#FF4D5E":"#8A98A8";x.fillText(stTxt,W-P,50);
+  // linha do placar
+  const cy=148;
+  x.textAlign="left";x.font="800 30px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";x.fillText(nm(+g.home_team_id),P,cy);
+  x.textAlign="right";x.fillText(nm(+g.away_team_id),W-P,cy);
+  x.textAlign="center";x.font="800 42px 'Barlow Condensed',sans-serif";x.fillStyle=live?"#FF4D5E":"#EAF0F6";
+  x.fillText(hasRes?`${ra} : ${rb}`:"vs",W/2,cy+4);
+  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,176);x.lineTo(W-P,176);x.stroke();
+  x.textAlign="left";x.font="700 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("PALPITES & PONTOS",P,198);
+  const COL={cravou:"#E6B450",vencedor:"#1FB57A",errou:"#E06A73",pend:"#5d6b7a"};
+  rows.forEach((r,i)=>{
+    const Y=headH+i*rowH,cyl=Y+rowH/2+5;
+    if(i%2===0){x.fillStyle="rgba(255,255,255,.03)";rrect(x,P-8,Y+3,W-2*P+16,rowH-6,9);x.fill();}
+    x.textAlign="left";x.font="600 16px Inter,Arial,sans-serif";x.fillStyle="#EAF0F6";x.fillText(r.name,P,cyl);
+    const has=r.gx.a!==""&&r.gx.a!=null&&r.gx.b!==""&&r.gx.b!=null;
+    x.textAlign="center";x.font="700 19px 'Barlow Condensed',sans-serif";x.fillStyle=has?"#C7D0DA":"#5d6b7a";
+    x.fillText(has?`${r.gx.a} × ${r.gx.b}`:"—",W/2,cyl);
+    x.textAlign="right";x.fillStyle=COL[r.k]||"#5d6b7a";x.font="700 13px Inter,Arial,sans-serif";
+    x.fillText(hasRes?(r.l.toUpperCase()+(r.p>0?"  +"+r.p:"  +0")):"aguardando",W-P,cyl);
+  });
+  x.textAlign="center";x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+  x.fillText("Cravou +6 · Vencedor/empate +3 · Bolão MELI · Copa 2026",W/2,H-19);
+  x.textAlign="left";
+  return cv;
+}
+// ---- modal de prévia: gera PNG, mostra (com altura controlada), permite baixar/compartilhar ----
+let _shBlob=null,_shName="bolao-meli.png";
+function openShareModal(canvas,filename,title){
+  const m=document.getElementById("shmodal");if(!m)return;
+  document.getElementById("shtitle").textContent=title||"Compartilhar";
+  document.getElementById("shicon").innerHTML=ICONS.share||"";
+  _shName=filename||"bolao-meli.png";
+  canvas.toBlob(blob=>{
+    if(!blob)return;_shBlob=blob;
+    const img=document.getElementById("shimg");
+    if(img._u)URL.revokeObjectURL(img._u);
+    img._u=URL.createObjectURL(blob);img.src=img._u;
+    let canFiles=false;try{canFiles=!!(navigator.canShare&&navigator.canShare({files:[new File([blob],_shName,{type:"image/png"})]}));}catch(e){}
+    const sb=document.getElementById("shshare");sb.style.display=canFiles?"":"none";
+    const dl=document.getElementById("shdl");dl.style.flex=canFiles?"1":"1 1 100%";
+    m.classList.add("open");m.setAttribute("aria-hidden","false");
+  },"image/png");
+}
+function closeShareModal(){const m=document.getElementById("shmodal");if(!m)return;m.classList.remove("open");m.setAttribute("aria-hidden","true");}
+async function doShareBlob(){
+  if(!_shBlob)return;
+  try{const file=new File([_shBlob],_shName,{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))
+      await navigator.share({files:[file],title:"Bolão MELI",text:"Bolão MELI · Copa 2026"});
+  }catch(e){}
+}
+function doDownloadBlob(){
+  if(!_shBlob)return;const url=URL.createObjectURL(_shBlob);
+  const a=document.createElement("a");a.href=url;a.download=_shName;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+function shareRanking(){openShareModal(makeShareCanvas(),"bolao-meli-geral.png","Classificação geral");}
+
+/* ===================== PULL-TO-REFRESH (mobile) ===================== */
+(function(){
+  const TH=68;let y0=0,on=false,armed=false,busy=false;
+  const el=()=>document.getElementById("ptr");
+  document.addEventListener("touchstart",e=>{if(!busy&&window.scrollY<=0&&e.touches.length===1){y0=e.touches[0].clientY;on=true;armed=false;}},{passive:true});
+  document.addEventListener("touchmove",e=>{if(!on)return;const p=el();const dy=e.touches[0].clientY-y0;
+    if(dy<=0||window.scrollY>0){on=false;if(p){p.style.transform="";p.style.opacity="";}return;}
+    const d=Math.min(dy*0.55,92);
+    if(p){p.style.transform="translateY("+d+"px)";p.style.opacity=String(Math.min(1,d/TH));
+      const ic=p.querySelector(".ic");if(ic)ic.style.transform="rotate("+(d*4)+"deg)";}
+    armed=d>=TH-6;if(dy>6&&e.cancelable)e.preventDefault();},{passive:false});
+  document.addEventListener("touchend",()=>{if(!on)return;on=false;const p=el();if(!p)return;
+    if(armed){busy=true;const ic=p.querySelector(".ic");if(ic)ic.style.transform="";
+      p.classList.add("spin");p.style.transform="translateY(56px)";p.style.opacity="1";
+      Promise.resolve(tick(false)).finally(()=>{setTimeout(()=>{p.classList.remove("spin");p.style.transform="";p.style.opacity="";busy=false;},260);});}
+    else{p.style.transform="";p.style.opacity="";}},{passive:true});
+})();
+
+const _sh=document.getElementById("share");if(_sh){_sh.innerHTML=icon("share",14)+"Compartilhar";_sh.onclick=shareRanking;}
+const _ptic=document.querySelector("#ptr .ic");if(_ptic)_ptic.innerHTML=ICONS.ball;
+(function(){
+  const dl=document.getElementById("shdl"),ss=document.getElementById("shshare");
+  if(dl){dl.innerHTML=icon("share",16)+"Baixar imagem";dl.onclick=doDownloadBlob;}
+  if(ss){ss.innerHTML=icon("share",16)+"Compartilhar";ss.onclick=doShareBlob;}
+  const cl=document.getElementById("shclose");if(cl)cl.onclick=closeShareModal;
+  const m=document.getElementById("shmodal");if(m)m.addEventListener("click",e=>{if(e.target===m)closeShareModal();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeShareModal();});
+})();
 document.getElementById("refresh").onclick=()=>{setConn("","Atualizando…");tick(false);};
 buildTabs();
 tick(true);
