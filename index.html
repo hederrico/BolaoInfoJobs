@@ -149,6 +149,17 @@
   .dayhead .dl{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
   .dayhead .dc{font-size:11px;color:var(--muted-2);font-weight:600;white-space:nowrap}
   .dayhead::after{content:"";flex:1;height:1px;background:var(--line)}
+  /* modo edição do histórico (trava por senha) */
+  .sectitle .cardshare.histlock.on{color:var(--gold);border-color:rgba(230,180,80,.5);background:rgba(230,180,80,.12)}
+  .editbanner{display:flex;align-items:center;gap:11px;margin:0 2px 16px;padding:11px 13px;border-radius:var(--radius);
+    background:rgba(230,180,80,.08);border:1px solid rgba(230,180,80,.32)}
+  .editbanner>.ic{width:16px;height:16px;flex:none;color:var(--gold)}
+  .editbanner span{flex:1;font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.35}
+  .editbanner span b{color:var(--gold)}
+  .editbanner .eb-off{flex:none;background:var(--panel-2);border:1px solid var(--line-2);color:var(--ink);font:inherit;font-weight:700;font-size:12px;padding:6px 13px;border-radius:999px;cursor:pointer}
+  .editbanner .eb-off:hover{border-color:var(--muted-2)}
+  .card.editing.needfill{border-color:rgba(230,180,80,.42);box-shadow:0 0 0 1px rgba(230,180,80,.12)}
+  .card.editing.needfill .res{color:var(--gold)}
   .geral .rank .pts{color:var(--ink)}
   .empty{color:var(--muted-2);font-size:13.5px;text-align:center;padding:26px 14px;background:var(--panel-2);border:1px dashed var(--line);border-radius:var(--radius)}
   .empty b{color:var(--ink)}
@@ -719,9 +730,16 @@ const ICONS={
   pause:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6.5" y="5.5" width="3.6" height="13" rx="1"/><rect x="13.9" y="5.5" width="3.6" height="13" rx="1"/></svg>',
   replay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v3.5h3.5"/></svg>',
   video:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>',
-  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg>'
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19h3.2L18.5 8.7a2 2 0 0 0-2.8-2.8L5.4 16.2z"/><path d="M14 7.5l2.8 2.8"/></svg>'
 };
 const icon=(name,sz)=>`<span class="ic" style="width:${sz||16}px;height:${sz||16}px">${ICONS[name]||""}</span>`;
+
+/* ===== EDIÇÃO RETROATIVA DO HISTÓRICO (trava simples por senha — não é segurança real) =====
+   >>> TROQUE pela senha que quiser. Fica exposta no front, serve só pra evitar edição acidental. <<< */
+const ADMIN_PW="bolao015";
+let editMode=false;
 
 /* ===== STORAGE (fallback memória p/ sandbox) ===== */
 const KEY="bolao_meli_live_v1";let mem={};
@@ -910,7 +928,9 @@ function renderHistoryList(listEl,g){
 }
 function buildHistoryCard(g){
   const k=kickParts(g);const[ra,rb]=res(g);const key="h"+g.id;
-  const card=document.createElement("div");card.className="card"+(expanded[key]?" open":"");
+  const empty=!hasAnyGuess(g.id);
+  const isOpen=!!expanded[key];
+  const card=document.createElement("div");card.className="card"+(isOpen?" open":"")+(editMode?" editing":"")+(editMode&&empty?" needfill":"");
   const row=document.createElement("div");row.className="soonrow";
   row.innerHTML=`
     <span class="clock">${icon("flag",19)}</span>
@@ -919,21 +939,37 @@ function buildHistoryCard(g){
       <span class="res">${ra} × ${rb}</span>
       <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
     </span>
-    <span class="when past">${k.d}<small>grupo ${g.group||"-"}</small></span>
+    <span class="when past">${k.d}<small>${editMode&&empty?"sem palpites":("grupo "+(g.group||"-"))}</small></span>
     <button class="cardshare rowshare" type="button" title="Compartilhar partida">${icon("share",13)}</button>
     <span class="caret">▼</span>`;
   const doShare=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
     openShareModal(()=>makeMatchCanvas(cur),`bolao-015-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar partida");};
   row.querySelector(".rowshare").onclick=doShare;
   const body=document.createElement("div");body.className="soonbody";
-  const subH=document.createElement("p");subH.className="sub";subH.textContent="Palpites & pontos da partida";
-  const listEl=document.createElement("div");listEl.className="ulist";
-  renderHistoryList(listEl,g);
-  body.appendChild(subH);body.appendChild(listEl);
-  histRefs[g.id]=listEl;
-  row.onclick=()=>{expanded[key]=!expanded[key];card.classList.toggle("open");};
+  let mountGrid=null;
+  if(editMode){
+    const subH=document.createElement("p");subH.className="sub";subH.textContent="Editar palpites · salva direto no banco";
+    body.appendChild(subH);
+    mountGrid=()=>{if(!body.querySelector(".guesses"))body.appendChild(guessGrid(g.id));}; // grade só ao abrir
+    if(isOpen)mountGrid();
+  }else{
+    const subH=document.createElement("p");subH.className="sub";subH.textContent="Palpites & pontos da partida";
+    const listEl=document.createElement("div");listEl.className="ulist";
+    renderHistoryList(listEl,g);
+    body.appendChild(subH);body.appendChild(listEl);
+    histRefs[g.id]=listEl;
+  }
+  row.onclick=ev=>{if(ev.target.closest(".rowshare"))return;const op=card.classList.toggle("open");expanded[key]=op;if(op&&mountGrid)mountGrid();};
   card.append(row,body);
   return card;
+}
+// liga/desliga o modo edição (senha simples no front)
+function toggleEdit(){
+  if(editMode){editMode=false;render();return;}
+  const pw=prompt("Senha para editar o histórico:");
+  if(pw==null)return;
+  if(pw===ADMIN_PW){editMode=true;render();}
+  else alert("Senha incorreta.");
 }
 
 let refs={}; // gid -> {scoreEl, chipEl, rankEl}
@@ -1983,10 +2019,19 @@ function render(){
   app.appendChild(tGer);app.appendChild(buildGeral());
 
   // HISTÓRICO (partidas encerradas com palpite registrado no banco)
-  const past=GAMES.filter(g=>classify(g)==="finished"&&hasAnyGuess(g.id))
+  const past=GAMES.filter(g=>classify(g)==="finished"&&(editMode||hasAnyGuess(g.id)))
     .sort((a,b)=>kickParts(b).ts-kickParts(a).ts); // mais recente primeiro
-  const tHist=document.createElement("div");tHist.className="sectitle";tHist.innerHTML=icon("flag",15)+" Histórico de partidas";
+  const tHist=document.createElement("div");tHist.className="sectitle";
+  tHist.innerHTML=icon("flag",15)+" Histórico de partidas"+
+    `<button class="cardshare histlock${editMode?" on":""}" type="button" title="${editMode?"Sair do modo edição":"Editar histórico (senha)"}">${icon(editMode?"edit":"lock",13)}</button>`;
+  tHist.querySelector(".histlock").onclick=toggleEdit;
   app.appendChild(tHist);
+  if(editMode){
+    const banner=document.createElement("div");banner.className="editbanner";
+    banner.innerHTML=`${icon("edit",14)}<span><b>Modo edição ligado.</b> Preencha os palpites das partidas — salva direto no banco compartilhado.</span><button type="button" class="eb-off">Sair</button>`;
+    banner.querySelector(".eb-off").onclick=toggleEdit;
+    app.appendChild(banner);
+  }
   if(past.length){
     // agrupa por dia (Brasília), mais recente primeiro
     const groups=[],gidx={};
