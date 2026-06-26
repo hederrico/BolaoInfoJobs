@@ -2458,9 +2458,18 @@ function closeVideoOverlay(){const ov=document.getElementById("vidov");if(!ov)re
   if(_vid.url){URL.revokeObjectURL(_vid.url);_vid.url=null;}
   _vid.blob=null;_vid.recording=false;
   ov.classList.remove("open");ov.setAttribute("aria-hidden","true");}
-async function shareVideo(){if(!_vid.blob)return;
-  try{const f=new File([_vid.blob],_vid.name||"bolao-015-corrida.webm",{type:_vid.blob.type});
-    if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:"Bolão 015",text:"Corrida do bolão · Copa 2026"});}catch(e){}}
+// tipo MIME limpo (sem ";codecs=…", que quebra o compartilhamento nativo do Windows)
+const _vidType=()=>(_vid.name&&_vid.name.endsWith(".mp4"))?"video/mp4":"video/webm";
+const _vidFile=()=>new File([_vid.blob],_vid.name||"bolao-015-corrida.mp4",{type:_vidType()});
+async function shareVideo(){
+  if(!_vid.blob)return;
+  const f=_vidFile();
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Bolão 015",text:"Corrida do bolão · Copa 2026"});return;}
+  }catch(e){if(e&&e.name==="AbortError")return;}
+  // navegador não compartilhou (ex.: sem suporte a vídeo) -> baixa o arquivo
+  downloadBlobAs(_vid.blob,_vid.name||"bolao-015-corrida.mp4");
+}
 async function recordRaceVideo(btn){
   const ov=document.getElementById("vidov");if(!ov)return;
   _vid={btn,aborted:false,recording:true};
@@ -2498,7 +2507,7 @@ async function recordRaceVideo(btn){
   const P=28,ROWH=44,headerH=104,barsTop=headerH+6,barsH=PLAYERS.length*ROWH;
   const chartTop=barsTop+barsH+20,chartH=H-chartTop-30;
   const barX=P+24+28+8+92,barRight=W-P-54,barW=barRight-barX;
-  const cx0=P+22,cw=W-P-cx0-66,cy0=chartTop+8,chh=chartH-26;
+  const cx0=P+22,cw=W-P-cx0-100,cy0=chartTop+8,chh=chartH-26;
   const Xc=i=>cx0+(N<=1?0:(i/(N-1))*cw),Yc=v=>cy0+chh-((v-mn)/(mx-mn))*chh;
   const ease=t=>1-Math.pow(1-t,2);
   function drawBG(){const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,"#101a24");grd.addColorStop(1,"#0B0F14");
@@ -2540,15 +2549,26 @@ async function recordRaceVideo(btn){
     x.textAlign="left";x.font="700 10px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText("EVOLUÇÃO",P,chartTop-6);
     for(let k=0;k<=3;k++){const v=mn+(mx-mn)*k/3,yy=Yc(v);
       x.strokeStyle="rgba(255,255,255,.06)";x.lineWidth=1;x.beginPath();x.moveTo(cx0,yy);x.lineTo(cx0+cw,yy);x.stroke();
-      x.textAlign="right";x.font="700 8px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";x.fillText(String(Math.round(v)),cx0-4,yy+3);}
+      x.textAlign="right";x.font="700 9px Inter,Arial,sans-serif";x.fillStyle="#7e8b99";x.fillText(String(Math.round(v)),cx0-4,yy+3);}
     PLAYERS.forEach(p=>{const c=pSoft(p);
-      x.strokeStyle=c;x.globalAlpha=.12;x.lineWidth=1.4;x.beginPath();
+      x.strokeStyle=c;x.globalAlpha=.13;x.lineWidth=1.6;x.beginPath();
       frames.forEach((f,i)=>{const xx=Xc(i),yy=Yc(f.totals[p]);i?x.lineTo(xx,yy):x.moveTo(xx,yy);});x.stroke();x.globalAlpha=1;
       const fa=Math.floor(R);x.beginPath();
       for(let i=0;i<=fa;i++){const xx=Xc(i),yy=Yc(frames[i].totals[p]);i?x.lineTo(xx,yy):x.moveTo(xx,yy);}
-      x.lineTo(Xc(R),Yc(val[p]));x.lineWidth=1.8;x.strokeStyle=c;x.lineJoin="round";x.stroke();
-      x.fillStyle=c;x.beginPath();x.arc(Xc(R),Yc(val[p]),3,0,7);x.fill();});
+      x.lineTo(Xc(R),Yc(val[p]));x.lineWidth=2;x.strokeStyle=c;x.lineJoin="round";x.lineCap="round";x.stroke();});
     x.strokeStyle="rgba(255,255,255,.22)";x.lineWidth=1;x.beginPath();x.moveTo(Xc(R),cy0);x.lineTo(Xc(R),cy0+chh);x.stroke();
+    // marcadores: avatar + nome no fim de cada linha, com de-colisão vertical
+    const endD=22,GAP=endD+3,ax=Xc(R)+4;
+    const items=PLAYERS.map(p=>({p,ty:Yc(val[p])})).sort((m,n)=>m.ty-n.ty);
+    items.forEach(it=>it.ly=it.ty);
+    for(let i=1;i<items.length;i++)if(items[i].ly-items[i-1].ly<GAP)items[i].ly=items[i-1].ly+GAP;
+    const over=items.length?items[items.length-1].ly-(cy0+chh):0;if(over>0)items.forEach(it=>it.ly-=over);
+    const under=items.length?cy0-items[0].ly:0;if(under>0)items.forEach(it=>it.ly+=under);
+    items.forEach(it=>{const c=pSoft(it.p);
+      x.strokeStyle=c;x.globalAlpha=.5;x.lineWidth=1.2;x.beginPath();x.moveTo(Xc(R),it.ty);x.lineTo(ax,it.ly);x.stroke();x.globalAlpha=1;
+      drawAvatar(x,A(it.p),ax,it.ly-endD/2,endD);
+      x.textAlign="left";x.font="700 13px Inter,Arial,sans-serif";x.lineWidth=3;x.strokeStyle="#0B0F14";x.lineJoin="round";
+      x.strokeText(it.p,ax+endD+4,it.ly+4);x.fillStyle=c;x.fillText(it.p,ax+endD+4,it.ly+4);});
   }
   // tempo
   const startHold=500,endHold=2000;
@@ -2564,7 +2584,8 @@ async function recordRaceVideo(btn){
     x.textAlign="center";x.font="600 11px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
     x.fillText("Cravou +6 · Vencedor/empate +3 · Bolão 015 · Copa 2026",W/2,H-12);}
   // grava
-  const mime=["video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm","video/mp4"].find(m=>{try{return MediaRecorder.isTypeSupported(m);}catch(e){return false;}})||"";
+  // prefere MP4/H.264 (aceito pelo WhatsApp); cai p/ webm só se o navegador não suportar mp4
+  const mime=["video/mp4;codecs=avc1.42E01E","video/mp4;codecs=avc1","video/mp4;codecs=h264","video/mp4","video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm"].find(m=>{try{return MediaRecorder.isTypeSupported(m);}catch(e){return false;}})||"";
   _vid.name=(mime.indexOf("mp4")>=0?"bolao-015-corrida.mp4":"bolao-015-corrida.webm");
   const stream=cv.captureStream(30);
   let rec;try{rec=mime?new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000}):new MediaRecorder(stream);}catch(e){rec=new MediaRecorder(stream);}
@@ -2576,11 +2597,15 @@ async function recordRaceVideo(btn){
     _vid.blob=blob;const url=URL.createObjectURL(blob);_vid.url=url;
     vout.src=url;vout.style.display="block";vout.loop=true;try{vout.play();}catch(e){}
     document.getElementById("vidtitle").textContent="Vídeo pronto! 🎬";
-    document.getElementById("vidsub").textContent="Baixe ou compartilhe — "+(N-1)+" gols, "+Math.round(totalMs/1000)+"s.";
+    // compartilhar vídeo só faz sentido no celular (onde o WhatsApp realmente abre); no desktop, só baixar
+    const isMobile=(window.matchMedia&&matchMedia("(pointer:coarse)").matches)||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"");
+    let canF=false;try{canF=!!(navigator.canShare&&navigator.canShare({files:[_vidFile()]}));}catch(e){}
+    const showShare=canF&&isMobile;
+    document.getElementById("vidshare").style.display=showShare?"":"none";
+    const webmWarn=_vid.name.endsWith(".mp4")?"":" · formato .webm";
+    document.getElementById("vidsub").textContent=(showShare?"Baixe ou compartilhe":"Baixe e mande no seu grupo")+" — "+(N-1)+" gols, "+Math.round(totalMs/1000)+"s."+webmWarn;
     document.getElementById("vidprog").style.width="100%";
     document.getElementById("vidact").style.display="flex";
-    let canF=false;try{canF=!!(navigator.canShare&&navigator.canShare({files:[new File([blob],_vid.name,{type:blob.type})]}));}catch(e){}
-    document.getElementById("vidshare").style.display=canF?"":"none";
     if(_vid.btn)_vid.btn.disabled=false;_vid.recording=false;
   };
   const prog=document.getElementById("vidprog");
