@@ -302,6 +302,39 @@
   .ytfail span{font-size:12px;max-width:300px;line-height:1.35}
   .ytfail-btn{display:inline-flex;align-items:center;gap:6px;margin-top:4px;background:var(--green);color:#06140e;font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;text-decoration:none}
   .ytfail-btn .ic{color:#06140e}
+  .fp-yt{text-decoration:none}
+
+  /* ===== preview do chaveamento embutido no card (mata-mata) ===== */
+  .kobrk{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:11px 12px 12px;background:rgba(255,255,255,.02)}
+  .kobrk-cap{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);line-height:1.3;margin-bottom:11px}
+  .kobrk-cap .ic{color:var(--gold);flex:none}
+  .kobrk-cap b{color:var(--ink);font-weight:800}
+  .kobrk-grid{display:grid;grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr);align-items:stretch}
+  .kobrk-left{display:grid;grid-template-rows:1fr 1fr;gap:10px;min-width:0}
+  .kobrk-conn{position:relative}
+  .kobrk-conn svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .kobrk-conn svg path{stroke:var(--line-2);stroke-width:1.6}
+  .kobrk-next{display:flex;align-items:center;min-width:0}
+  .kcard{min-width:0;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);padding:7px 8px;display:flex;flex-direction:column;gap:5px}
+  .kcard.is-this{border-color:rgba(31,181,122,.5);background:rgba(31,181,122,.07);box-shadow:0 0 0 1px rgba(31,181,122,.18) inset}
+  .kcard.is-next{border-style:dashed;background:rgba(230,180,80,.05);border-color:rgba(230,180,80,.32)}
+  .kc-h{display:flex;align-items:center;justify-content:space-between;gap:6px}
+  .kc-t{flex:1;min-width:0;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kcard.is-this .kc-t{color:var(--green)}
+  .kcard.is-next .kc-t{color:var(--gold)}
+  .kc-lv{font-size:10px;font-weight:800;color:var(--live);white-space:nowrap;flex:none}
+  .kc-fin{font-size:10px;font-weight:700;color:var(--muted-2);white-space:nowrap;flex:none}
+  .kc-soon{font-size:10px;font-weight:800;color:var(--muted);white-space:nowrap;flex:none}
+  .kt{display:flex;align-items:center;gap:6px;min-width:0}
+  .kt-fl{flex:none;width:22px;height:16px;display:inline-grid;place-items:center}
+  .kt-fl img{width:22px;height:16px;object-fit:cover;border-radius:3px;display:block}
+  .kt .ktf{display:inline-grid;place-items:center;width:16px;height:16px;color:var(--muted-2)}
+  .kt .ktf svg{width:14px;height:14px}
+  .kt-n{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kt-sc{flex:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:var(--ink)}
+  .kt.win .kt-n{color:var(--ink)}
+  .kt.lose{opacity:.5}
+  .kt.tbd .kt-n{color:var(--muted-2);font-weight:600;font-style:italic}
 
   /* ===== classificação dos grupos ===== */
   .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:14px}
@@ -656,7 +689,9 @@
   @media(max-width:380px){.statgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
   /* contagem regressiva do próximo jogo */
-  .nextcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 16px 18px;text-align:center}
+  .nextcard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 16px 18px;text-align:center}
+  .nc-share{position:absolute;top:12px;right:12px}
+  .nextcard .kobrk{text-align:left;margin-top:16px}
   .nc-lab{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
   .nc-lab .ic{width:14px;height:14px}
   .nc-match{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px}
@@ -815,6 +850,9 @@ function drawAvatar(x,im,X,Y,D){x.save();x.beginPath();x.arc(X+D/2,Y+D/2,D/2,0,7
 const flagW=req=>{const o=[40,80,160,320];const want=(req||40)*2;return o.find(x=>x>=want)||320;};
 const flag=(id,w)=>{const t=TEAMS[id];return t?`https://flagcdn.com/w${flagW(w)}/${t.code}.png`:"";};
 const nm=id=>TEAMS[id]?TEAMS[id].pt:("#"+id);
+// nome da fase do mata-mata (a partir do "type" do feed)
+const KO_ROUND={r32:"16-avos de final",r16:"Oitavas de final",qf:"Quartas de final",sf:"Semifinal",final:"Final",third:"Disputa de 3º"};
+const koRoundName=t=>KO_ROUND[t]||"Mata-mata";
 
 /* ===== ÍCONES (SVG inline, herdam a cor via currentColor) ===== */
 const ICONS={
@@ -921,7 +959,7 @@ function ytTitleGame(title,g){ const set=new Set(ytNorm(title).split(" ")); retu
 async function ytSearch(params){
   if(!YT_API_KEY)return null;
   const u=new URL("https://www.googleapis.com/youtube/v3/search");
-  u.searchParams.set("part","snippet");u.searchParams.set("channelId",CAZE_CHANNEL_ID);u.searchParams.set("type","video");u.searchParams.set("maxResults","50");u.searchParams.set("key",YT_API_KEY);
+  u.searchParams.set("part","snippet");u.searchParams.set("channelId",CAZE_CHANNEL_ID);u.searchParams.set("type","video");u.searchParams.set("videoEmbeddable","true");u.searchParams.set("maxResults","50");u.searchParams.set("key",YT_API_KEY);
   Object.keys(params||{}).forEach(k=>u.searchParams.set(k,params[k]));
   try{ const r=await fetch(u.toString()); const d=await r.json(); return d&&d.error?null:d; }catch(e){ return null; }
 }
@@ -1179,7 +1217,7 @@ function buildLiveCard(g){
   const[ra,rb]=res(g);
   const card=document.createElement("div");card.className="card";
   const chead=document.createElement("div");chead.className="chead";
-  chead.innerHTML=`<span class="meta">Grupo ${g.group||"-"} · ${g.matchday?("Rodada "+g.matchday):"Fase de grupos"}</span>`;
+  chead.innerHTML=`<span class="meta">${g.type==="group"?("Grupo "+(g.group||"-")+" · "+(g.matchday?("Rodada "+g.matchday):"Fase de grupos")):(koRoundName(g.type)+" · Jogo "+g.id)}</span>`;
   const chip=document.createElement("span");
   chip.className="chip "+(live?"live":"done");
   chip.innerHTML=live?`<span class="hb"></span> Ao vivo · <span class="lm">${liveTxt(g)}</span>`:"Encerrado";
@@ -1209,21 +1247,23 @@ function buildLiveCard(g){
   sl.children[1].appendChild(scoreEl);
   card.appendChild(sl);
 
-  const sub=document.createElement("p");sub.className="sub";sub.textContent="Palpites & como tá a rodada";
+  const sub=document.createElement("p");sub.className="sub";sub.textContent=g.type==="group"?"Palpites & como tá a rodada":"Palpites & como tá o chaveamento";
   const listEl=document.createElement("div");listEl.className="ulist";
   card.appendChild(sub);card.appendChild(listEl);
 
-  // classificação do grupo, ao vivo
-  let standEl=null,scnSec=null;
+  // classificação do grupo (ao vivo) OU preview do chaveamento (mata-mata)
+  let standEl=null,scnSec=null,koSec=null;
   if(g.type==="group"&&g.group){
     const sd=document.createElement("div");sd.className="livestand";
     const ssub=document.createElement("p");ssub.className="sub";ssub.textContent="Classificação do grupo "+g.group+" · ao vivo";
     standEl=document.createElement("div");standEl.appendChild(buildStandTable(g.group,true,true));
     sd.appendChild(ssub);sd.appendChild(standEl);card.appendChild(sd);
     scnSec=cardScenarioSection(g.group);if(scnSec)card.appendChild(scnSec);
+  }else{
+    koSec=koPreviewSection(g);if(koSec)card.appendChild(koSec);
   }
 
-  refs[g.id]={scoreEl,chip,listEl,standEl,scnSec,group:g.group};
+  refs[g.id]={scoreEl,chip,listEl,standEl,scnSec,koSec,group:g.group};
   renderUnified(listEl,g);
   return card;
 }
@@ -1238,15 +1278,18 @@ function buildSoonCard(g){
       <span class="mid">×</span>
       <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
     </span>
-    <span class="when">${k.h}<small>${k.d} · grupo ${g.group||"-"}</small></span>
+    <span class="when">${k.h}<small>${k.d} · ${g.type==="group"?("grupo "+(g.group||"-")):koRoundName(g.type)}</small></span>
     ${watchLink(g.id)}
+    <button class="cardshare rowshare" type="button" title="Compartilhar jogo">${icon("share",13)}</button>
     <span class="caret">▼</span>`;
+  row.querySelector(".rowshare").onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
+    openShareModal(()=>makeNextCanvas(cur),`bolao-015-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Compartilhar jogo");};
   const body=document.createElement("div");body.className="soonbody";
   const subG=document.createElement("p");subG.className="sub";subG.textContent="Palpites (já deixa cravado)";
   body.appendChild(subG);body.appendChild(guessGrid(g.id));
-  if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)body.appendChild(stk);}
-  const scn=cardScenarioSection(g.group);if(scn)body.appendChild(scn);
-  row.onclick=ev=>{if(ev.target.closest(".watchbtn"))return;expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
+  if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)body.appendChild(stk);const scn=cardScenarioSection(g.group);if(scn)body.appendChild(scn);}
+  else{const kp=koPreviewSection(g);if(kp)body.appendChild(kp);}
+  row.onclick=ev=>{if(ev.target.closest(".watchbtn,.rowshare"))return;expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
   card.append(row,body);
   return card;
 }
@@ -1290,7 +1333,7 @@ function buildGeral(){
 
 /* ===================== ABAS / NAVEGAÇÃO ===================== */
 let activeTab="bolao";
-const TABS=[["bolao","ball","Bolão"],["live","tv","Assistir jogos"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["cenarios","scenarios","Cenários"],["corrida","race","Corrida"]];
+const TABS=[["bolao","ball","Bolão"],["live","tv","Assistir jogos"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["corrida","race","Corrida"]];
 function renderActive(){
   if(activeTab!=="corrida"){stopRace();}
   if(activeTab!=="bolao"){stopCountdown();}
@@ -1300,7 +1343,6 @@ function renderActive(){
   else if(activeTab==="live")renderLive();
   else if(activeTab==="grupos")renderGroups();
   else if(activeTab==="mata")renderBracket();
-  else if(activeTab==="cenarios")renderScenarios();
   else if(activeTab==="corrida")renderRace();
 }
 function buildTabs(){
@@ -1397,11 +1439,12 @@ function openFloat(gid){
       <span class="fp-grip">⋮⋮</span>
       <span class="fp-title">${g?(tmName(g.home_team_id)+" × "+tmName(g.away_team_id)):"Jogo"}</span>
       <span class="fp-acts">
+        <a class="fp-btn fp-yt" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener" title="Abrir no YouTube">${licon("ext",13)}</a>
         <button class="fp-btn fp-tab" type="button" title="Abrir na aba Assistir jogos">${icon("tv",14)}</button>
         <button class="fp-btn fp-close" type="button" title="Fechar">${licon("x",13)}</button>
       </span>
     </div>
-    <div class="fp-stage"><div id="fp-mount"></div></div>
+    <div class="fp-stage"></div>
     <div class="fp-resize" title="Redimensionar"></div>`;
   document.body.appendChild(box);
   // tamanho default maior (≈16:9 + barra do topo), limitado à viewport
@@ -1413,11 +1456,15 @@ function openFloat(gid){
   fpResize(box,box.querySelector(".fp-resize"));
   box.querySelector(".fp-close").onclick=closeFloat;
   box.querySelector(".fp-tab").onclick=()=>{const id=_floatGid;closeFloat();if(activeTab!=="live"){activeTab="live";buildTabs();}liveSel=[id];_liveSig=null;renderActive();window.scrollTo(0,0);};
-  loadYT(()=>{ const el=document.getElementById("fp-mount"); if(!el||!(window.YT&&YT.Player))return;
-    try{ _floatYT=new YT.Player(el,{videoId:yt,
-      playerVars:Object.assign({autoplay:1,playsinline:1,modestbranding:1,rel:0,controls:1},_httpOrigin()?{origin:_httpOrigin()}:{}),
-      events:{onReady:e=>{try{e.target.playVideo&&e.target.playVideo();}catch(_){}},
-        onError:()=>{const st=document.querySelector("#floatplayer .fp-stage");if(st)st.innerHTML=ytFailHTML(gid);}}}); }catch(e){} });
+  // iframe simples (não a IFrame API): mais tolerante p/ transmissão ao vivo e evita o erro de origem/embed.
+  const st=box.querySelector(".fp-stage");
+  if(location.protocol==="file:"){ st.innerHTML=ytFailHTML(gid); return; } // de file:// o YouTube bloqueia o embed
+  const o=_httpOrigin();
+  const ifr=document.createElement("iframe");
+  ifr.src="https://www.youtube.com/embed/"+yt+"?autoplay=1&playsinline=1&rel=0&modestbranding=1"+(o?"&origin="+encodeURIComponent(o):"");
+  ifr.setAttribute("allow","autoplay; encrypted-media; picture-in-picture; fullscreen");
+  ifr.setAttribute("allowfullscreen","");ifr.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+  st.appendChild(ifr);
 }
 function closeFloat(){ if(_floatYT){try{_floatYT.destroy();}catch(e){}_floatYT=null;} const b=document.getElementById("floatplayer");if(b&&b.parentNode)b.parentNode.removeChild(b);_floatGid=null; }
 function fpDrag(box,handle){
@@ -1463,10 +1510,12 @@ function liveAutoSel(cand){
   if(!liveSel.length)liveSel=cand.live.filter(g=>STREAMS[String(g.id)]).slice(0,2).map(g=>String(g.id)); // auto-seleciona só os ao vivo
 }
 function liveToggle(id){
-  id=String(id);const i=liveSel.indexOf(id);
+  id=String(id);const i=liveSel.indexOf(id);const adding=i<0;
   if(i>=0)liveSel.splice(i,1);
   else{ if(liveSel.length>=2)liveSel.shift(); liveSel.push(id); }
   _liveSig=null;renderLive();
+  // ao adicionar, sobe pro mosaico (no celular ele fica acima da lista, fora da tela)
+  if(adding){const mos=document.querySelector(".livewrap .mosaic");if(mos&&mos.scrollIntoView)mos.scrollIntoView({behavior:"smooth",block:"start"});}
 }
 function toggleLiveManage(){
   if(liveManage){liveManage=false;_liveSig=null;renderLive();return;}
@@ -1564,7 +1613,8 @@ function liveChip(g){
     </div>
     <div class="lc-names">${tmName(g.home_team_id)} × ${tmName(g.away_team_id)}</div>
     <div class="lc-meta">${badge}${has?`<span class="lc-has">${sel?"no mosaico ✓":"assistir"}</span>`:'<span class="lc-no">sem vídeo</span>'}</div>`;
-  c.querySelector(".lc-row").onclick=()=>{ if(!has&&!liveManage)return; liveToggle(id); };
+  // card inteiro clicável (menos a área de gerenciar link); sem vídeo só clica no modo gerenciar
+  c.onclick=ev=>{ if(ev.target.closest(".lc-manage"))return; if(!has&&!liveManage)return; liveToggle(id); };
   if(liveManage){
     const mg=document.createElement("div");mg.className="lc-manage";
     const inp=document.createElement("input");inp.className="lc-inp";inp.type="text";inp.placeholder="link/ID do YouTube";inp.value=STREAMS[id]||"";
@@ -1820,6 +1870,83 @@ function ptKoLabel(raw){
   return raw;
 }
 const parseSrc=label=>{const m=String(label||"").match(/Match (\d+)/i);return m?String(+m[1]):null;};
+const winSrc=label=>{const m=String(label||"").match(/^Winner Match (\d+)$/i);return m?m[1]:null;}; // só "vencedor de"
+const koHasTeams=g=>!!(g&&+g.home_team_id&&+g.away_team_id);
+// vencedor já definido de um jogo encerrado (empate em mata-mata -> pênaltis, não modelado)
+function koWinner(g){if(!g||classify(g)!=="finished")return 0;const a=parseInt(g.home_score)||0,b=parseInt(g.away_score)||0;return a>b?+g.home_team_id:b>a?+g.away_team_id:0;}
+/* ===================== PREVIEW DO CHAVEAMENTO (embutido no card do Bolão) =====================
+   Para um jogo de mata-mata, mostra ESTE jogo + o jogo IRMÃO (a outra origem do próximo confronto)
+   e pra onde os vencedores vão: "quem vencer pega o vencedor do jogo X". */
+function koContext(g){
+  if(!g||g.type==="group")return null;
+  const gid=String(g.id);
+  let next=null,gSide=null,sibId=null;
+  for(const x of GAMES){ if(x.type==="group")continue;
+    if(winSrc(x.home_team_label)===gid){next=x;gSide="h";sibId=parseSrc(x.away_team_label);break;}
+    if(winSrc(x.away_team_label)===gid){next=x;gSide="a";sibId=parseSrc(x.home_team_label);break;}
+  }
+  if(!next)return null; // a final não tem próximo confronto
+  const sib=GAMES.find(x=>String(x.id)===String(sibId))||null;
+  if(!sib)return null;
+  return {next,sib,gSide};
+}
+// uma linha (time) de um card do mini-chaveamento — bandeira + nome + placar; rótulo de origem se indefinido
+function koMiniRow(g,side){
+  const id=side==="h"?g.home_team_id:g.away_team_id;
+  const label=side==="h"?g.home_team_label:g.away_team_label;
+  const sc=side==="h"?g.home_score:g.away_score, osc=side==="h"?g.away_score:g.home_score;
+  const def=id&&id!=="0"&&TEAMS[+id];
+  const c=classify(g),shown=(c==="finished"||c==="live");
+  let cls="kt";
+  if(shown&&def){const a=parseInt(sc)||0,b=parseInt(osc)||0;if(a>b)cls+=" win";else if(a<b)cls+=" lose";}
+  if(!def)cls+=" tbd";
+  const fl=def?`<img src="${flag(+id,22)}" onerror="this.style.visibility='hidden'">`:`<span class="ktf">${ICONS.flag}</span>`;
+  const scEl=(shown&&def)?`<span class="kt-sc">${parseInt(sc)||0}</span>`:"";
+  return `<div class="${cls}"><span class="kt-fl">${fl}</span><span class="kt-n">${def?nm(+id):ptKoLabel(label)}</span>${scEl}</div>`;
+}
+// conteúdo do canto do card: ao vivo / encerrado / data·hora (Brasília) — os jogos caem em dias diferentes
+function koStateHTML(g){const c=classify(g);
+  if(c==="live")return `<span class="kc-lv">● ${liveTxt(g)}</span>`;
+  if(c==="finished")return `<span class="kc-fin">Fim</span>`;
+  const k=kickParts(g);return `<span class="kc-soon">${k.d} · ${k.h}</span>`;}
+function koMiniCard(g,role){
+  const d=document.createElement("div");
+  d.className="kcard"+(role==="this"?" is-this":"");
+  const ttl=role==="this"?"Este jogo":("Jogo "+g.id);
+  d.innerHTML=`<div class="kc-h"><span class="kc-t">${ttl}</span>${koStateHTML(g)}</div>`+koMiniRow(g,"h")+koMiniRow(g,"a");
+  return d;
+}
+// card do próximo confronto: "Venc. deste jogo × Venc. Jogo irmão" (ou o time já definido)
+function koNextCard(g,sib,next,gSide){
+  const d=document.createElement("div");d.className="kcard is-next";
+  const wThis=koWinner(g),wSib=koWinner(sib);
+  const slot=(win,labelTxt)=>win
+    ?`<div class="kt win"><span class="kt-fl"><img src="${flag(+win,22)}" onerror="this.style.visibility='hidden'"></span><span class="kt-n">${nm(+win)}</span></div>`
+    :`<div class="kt tbd"><span class="kt-fl"><span class="ktf">${ICONS.trophy}</span></span><span class="kt-n">${labelTxt}</span></div>`;
+  const rg=slot(wThis,"Venc. deste jogo"),rs=slot(wSib,"Venc. Jogo "+sib.id);
+  const rows=gSide==="h"?(rg+rs):(rs+rg); // respeita a ordem mando/visitante do próximo jogo
+  d.innerHTML=`<div class="kc-h"><span class="kc-t">${koRoundName(next.type)}</span>${koStateHTML(next)}</div>`+rows;
+  return d;
+}
+const koConnSVG=()=>'<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+
+  '<path d="M0,25 H55 V50 H100" fill="none" vector-effect="non-scaling-stroke"/>'+
+  '<path d="M0,75 H55 V50" fill="none" vector-effect="non-scaling-stroke"/></svg>';
+function koPreviewSection(g){
+  const ctx=koContext(g);if(!ctx)return null;
+  const {next,sib,gSide}=ctx;
+  const sec=document.createElement("div");sec.className="kobrk";
+  const sibTeams=koHasTeams(sib)?(nm(+sib.home_team_id)+" × "+nm(+sib.away_team_id)):("Jogo "+sib.id);
+  const cap=document.createElement("div");cap.className="kobrk-cap";
+  cap.innerHTML=icon("bracket",14)+`<span>Quem vencer enfrenta o vencedor de <b>${sibTeams}</b> — ${koRoundName(next.type)}</span>`;
+  const grid=document.createElement("div");grid.className="kobrk-grid";
+  const left=document.createElement("div");left.className="kobrk-left";
+  left.appendChild(koMiniCard(g,"this"));left.appendChild(koMiniCard(sib,"sib"));
+  const conn=document.createElement("div");conn.className="kobrk-conn";conn.innerHTML=koConnSVG();
+  const nx=document.createElement("div");nx.className="kobrk-next";nx.appendChild(koNextCard(g,sib,next,gSide));
+  grid.append(left,conn,nx);
+  sec.append(cap,grid);
+  return sec;
+}
 // monta a árvore do mata-mata a partir dos rótulos do feed (id do jogo = nº oficial da partida)
 function koTree(){
   const byId={};GAMES.forEach(g=>{if(g.type!=="group")byId[g.id]=g;});
@@ -2510,14 +2637,18 @@ function buildNextCountdown(){
     e.innerHTML="<b>Nenhum jogo rolando agora.</b><br>Assim que apitar, ele aparece aqui pronto pro palpite.";return e;}
   const g=up[0],k=kickParts(g);
   const card=document.createElement("div");card.className="nextcard";
-  card.innerHTML=`<div class="nc-lab">${icon("clock",14)} Próximo jogo</div>
+  card.innerHTML=`<button class="cardshare nc-share" type="button" title="Compartilhar próximo jogo">${icon("share",14)}</button>
+    <div class="nc-lab">${icon("clock",14)} Próximo jogo</div>
     <div class="nc-match">
       <span class="nc-team"><img src="${flag(+g.home_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.home_team_id)}</span></span>
       <span class="nc-x">×</span>
       <span class="nc-team"><img src="${flag(+g.away_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.away_team_id)}</span></span>
     </div>
     <div class="nc-cd"><span class="nc-time">--:--:--</span></div>
-    <div class="nc-when">${k.d} · ${k.h}${g.group?(" · Grupo "+g.group):""}${g.matchday?(" · Rodada "+g.matchday):""}</div>`;
+    <div class="nc-when">${k.d} · ${k.h}${g.type!=="group"?(" · "+koRoundName(g.type)+" · Jogo "+g.id):(g.group?(" · Grupo "+g.group):"")+(g.matchday?(" · Rodada "+g.matchday):"")}</div>`;
+  card.querySelector(".nc-share").onclick=ev=>{ev.stopPropagation();const cur=GAMES.find(x=>String(x.id)===String(g.id))||g;
+    openShareModal(()=>makeNextCanvas(cur),`bolao-015-proximo-${nm(+g.home_team_id)}-${nm(+g.away_team_id)}.png`,"Próximo jogo");};
+  const kp=koPreviewSection(g);if(kp)card.appendChild(kp); // preview das chaves no countdown (mata-mata)
   const timeEl=card.querySelector(".nc-time");
   stopCountdown();_cdFired=false;
   const upd=()=>{const ms=k.ts-Date.now();timeEl.textContent=fmtCountdown(ms);
@@ -2595,6 +2726,7 @@ function refreshDynamic(){
     if(r.listEl&&!inputFocused())renderUnified(r.listEl,g);
     if(r.standEl&&r.group){r.standEl.innerHTML="";r.standEl.appendChild(buildStandTable(r.group,true,true));}
     if(r.scnSec&&r.scnSec._group&&!groupAllFinished(r.scnSec._group))fillScenarioBody(r.scnSec._body,r.scnSec._group);
+    if(r.koSec){const ns=koPreviewSection(g);if(ns){r.koSec.replaceWith(ns);r.koSec=ns;}}
   });
   Object.keys(histRefs).forEach(gid=>{const g=GAMES.find(x=>String(x.id)===String(gid));if(g)renderHistoryList(histRefs[gid],g);});
   refreshGeral();
@@ -2770,7 +2902,7 @@ async function makeMatchCanvas(g){
   const F=await loadFlags([g.home_team_id,g.away_team_id].concat(sids||[]));
   const A=await loadAvatars(PLAYERS);
   const {cv,x}=cvBase(W,H);
-  cvBrand(x,W,P,`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`,
+  cvBrand(x,W,P,isGroup?`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`:(koRoundName(g.type).toUpperCase()+" · JOGO "+g.id),
     live?("AO VIVO · "+liveTxt(g)):hasRes?"ENCERRADO":"A SEGUIR",live?"#FF4D5E":"#8A98A8");
   // bloco do placar: bandeira em cima, nome embaixo, placar branco no centro
   const qx=[W*0.27,W*0.73],fw=58,fh=42,fy=90;
@@ -2815,6 +2947,52 @@ async function makeMatchCanvas(g){
     });
   }
   cvFooter(x,W,H,"Cravou +6 · Vencedor/empate +3 · Bolão 015");
+  return cv;
+}
+// imagem de UM próximo jogo / countdown: confronto + horário + arte do chaveamento (este jogo + irmão + próximo)
+async function makeNextCanvas(g){
+  const k=kickParts(g),isKo=g.type!=="group",ctx=isKo?koContext(g):null;
+  const ids=[g.home_team_id,g.away_team_id];
+  if(ctx)[ctx.sib.home_team_id,ctx.sib.away_team_id,ctx.next.home_team_id,ctx.next.away_team_id].forEach(t=>ids.push(t));
+  const F=await loadFlags(ids);
+  const W=680,P=34,headH=212,brkH=ctx?170:0,footH=46,H=headH+brkH+footH;
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,isKo?(koRoundName(g.type).toUpperCase()+" · JOGO "+g.id):(`GRUPO ${(g.group||"-")} · ${g.matchday?("RODADA "+g.matchday):"COPA 2026"}`),"A SEGUIR","#8A98A8");
+  // confronto
+  const qx=[W*0.27,W*0.73],fw=64,fh=46,fy=96;
+  drawFlag(x,F(g.home_team_id),qx[0]-fw/2,fy,fw,fh);
+  drawFlag(x,F(g.away_team_id),qx[1]-fw/2,fy,fw,fh);
+  x.textAlign="center";x.font="800 22px 'Barlow Condensed',sans-serif";x.fillStyle="#EAF0F6";
+  x.fillText(cvTrunc(x,nm(+g.home_team_id),W*0.42),qx[0],fy+fh+26);
+  x.fillText(cvTrunc(x,nm(+g.away_team_id),W*0.42),qx[1],fy+fh+26);
+  x.font="800 38px 'Barlow Condensed',sans-serif";x.fillStyle="#FFFFFF";x.fillText("×",W/2,fy+34);
+  x.font="700 14px Inter,Arial,sans-serif";x.fillStyle="#C7D0DA";x.fillText(k.d+" · "+k.h+" (Brasília)",W/2,fy+fh+54);
+  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,headH-12);x.lineTo(W-P,headH-12);x.stroke();
+  // arte do chaveamento: este jogo + irmão -> próximo confronto
+  if(ctx){
+    const by=headH+6;
+    x.textAlign="left";x.font="700 11px Inter,Arial,sans-serif";x.fillStyle="#5d6b7a";
+    x.fillText(cvTrunc(x,"QUEM VENCER ENFRENTA O VENCEDOR DO JOGO "+ctx.sib.id+" — "+koRoundName(ctx.next.type).toUpperCase(),W-2*P),P,by+8);
+    const cardW=200,cardH=52,leftX=P,nextX=W-P-cardW;
+    const topY=by+32,botY=topY+cardH+18,cyt=topY+cardH/2,cyb=botY+cardH/2;
+    const nextTopY=topY+35,cyn=nextTopY+cardH/2,sx=leftX+cardW,px=nextX,midx=(sx+px)/2;
+    x.strokeStyle="rgba(255,255,255,.16)";x.lineWidth=1.6;
+    x.beginPath();x.moveTo(sx,cyt);x.lineTo(midx,cyt);x.lineTo(midx,cyn);x.lineTo(px,cyn);x.stroke();
+    x.beginPath();x.moveTo(sx,cyb);x.lineTo(midx,cyb);x.lineTo(midx,cyn);x.stroke();
+    drawKoCard(x,F,g,leftX,topY,cardW,cardH);
+    drawKoCard(x,F,ctx.sib,leftX,botY,cardW,cardH);
+    drawKoCard(x,F,ctx.next,nextX,nextTopY,cardW,cardH);
+    // data+hora de cada jogo no canto do card (estão em dias diferentes)
+    const drawWhen=(gm,X,Y)=>{if(classify(gm)==="finished")return;const kk=kickParts(gm);
+      x.textAlign="right";x.font="700 8px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";x.fillText(kk.d+" · "+kk.h,X+cardW-6,Y+9);};
+    drawWhen(g,leftX,topY);drawWhen(ctx.sib,leftX,botY);drawWhen(ctx.next,nextX,nextTopY);
+    x.strokeStyle="rgba(31,181,122,.6)";x.lineWidth=2;rrect(x,leftX,topY,cardW,cardH,6);x.stroke(); // destaca "este jogo"
+    x.textAlign="left";x.font="800 9px Inter,Arial,sans-serif";
+    x.fillStyle="#1FB57A";x.fillText("ESTE JOGO",leftX+2,topY-5);
+    x.fillStyle="#5d6b7a";x.fillText("JOGO "+ctx.sib.id,leftX+2,botY-5);
+    x.fillStyle="#E6B450";x.fillText(koRoundName(ctx.next.type).toUpperCase(),nextX+2,nextTopY-5);
+  }
+  cvFooter(x,W,H,"Bolão 015 · Copa 2026");
   return cv;
 }
 // imagem de UM grupo (aba Grupos): tabela completa J V E D SG P + status
@@ -3050,7 +3228,7 @@ async function shareVideo(){
   if(!_vid.blob)return;
   const f=_vidFile();
   try{
-    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Bolão 015",text:"Corrida do bolão · Copa 2026"});return;}
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return;}
   }catch(e){if(e&&e.name==="AbortError")return;}
   // navegador não compartilhou (ex.: sem suporte a vídeo) -> baixa o arquivo
   downloadBlobAs(_vid.blob,_vid.name||"bolao-015-corrida.mp4");
@@ -3346,7 +3524,7 @@ async function doShareBlob(){
   if(!_shBlob)return;
   try{const file=new File([_shBlob],_shName,{type:"image/png"});
     if(navigator.canShare&&navigator.canShare({files:[file]}))
-      await navigator.share({files:[file],title:"Bolão 015",text:"Bolão 015 · Copa 2026"});
+      await navigator.share({files:[file]}); // só a imagem, sem texto/legenda automática
   }catch(e){}
 }
 function doDownloadBlob(){
