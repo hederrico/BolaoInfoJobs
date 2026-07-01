@@ -204,106 +204,6 @@
   .sectitle .ic{width:16px;height:16px;color:var(--muted)}
   .sectitle .pulse+.ic{margin-left:0}
 
-  /* ===== ao vivo / mosaico ===== */
-  .livewrap{margin:2px 0 8px}
-  .live-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 2px 12px}
-  .live-head .lh-title{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.04em}
-  .live-head .lh-title .ic{color:var(--green)}
-  .live-head .lh-title small{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:0;color:var(--muted);text-transform:none}
-  .livelock{flex:none}
-  .livelock.on{color:var(--green);border-color:rgba(31,181,122,.5)}
-  /* mosaico ocupa o espaço máximo (altura setada por JS); 1 jogo = enorme, 2 = divididos */
-  .mosaic{display:grid;grid-template-columns:1fr;grid-template-rows:1fr;gap:10px;min-height:240px}
-  .mosaic.mos-2.lay-auto{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
-  @media(orientation:landscape){.mosaic.mos-2.lay-auto{grid-template-columns:1fr 1fr;grid-template-rows:1fr}}
-  .mosaic.mos-2.lay-stack{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
-  .mosaic.mos-2.lay-side{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
-  /* watch-mode: tela limpa pros vídeos (esconde header/legenda/status, compacta as abas) */
-  .live-head .lh-acts{display:flex;align-items:center;gap:6px;flex:none}
-  body.watch-mode .top,body.watch-mode .statusbar{display:none}
-  body.watch-mode .tabs{grid-template-columns:none;display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;margin:2px 0 10px;scrollbar-width:none}
-  body.watch-mode .tabs::-webkit-scrollbar{display:none}
-  body.watch-mode .tabs button{flex:0 0 auto;white-space:nowrap;padding:8px 12px}
-  .msq{background:#000;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;cursor:pointer;display:flex;flex-direction:column;min-height:0;transition:border-color .15s,box-shadow .15s}
-  .msq.focus{border-color:rgba(31,181,122,.65);box-shadow:0 0 0 1px rgba(31,181,122,.4)}
-  .msq-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;background:linear-gradient(180deg,var(--panel),var(--panel-2));border-bottom:1px solid var(--line)}
-  .msq-teams{display:flex;align-items:center;gap:6px;min-width:0;flex:1;overflow:hidden;font-weight:800;font-size:14px}
-  .msq-teams .lf{width:20px;height:13px;flex:none;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
-  .msq-sc{font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap;flex:none}
-  .msq-live{font-size:11px;font-weight:700;color:var(--green);margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .msq-actions{display:flex;align-items:center;gap:4px;flex:none}
-  .msq-aud,.msq-ext,.msq-close{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--muted);cursor:pointer}
-  .msq-aud.on{color:var(--green);border-color:rgba(31,181,122,.5);background:rgba(31,181,122,.1)}
-  .msq-ext{color:var(--muted);text-decoration:none}
-  .msq-close:hover{color:#e0556b;border-color:rgba(224,85,107,.5);background:rgba(224,85,107,.1)}
-  .msq-stage{position:relative;width:100%;flex:1;min-height:0;background:#000}
-  .msq-stage iframe,.msq-mount{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .msq-novideo{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted-2);font-size:13px;text-align:center;padding:12px}
-  .msq-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:34px 16px;
-    background:var(--panel-2);border:1px dashed var(--line);border-radius:var(--radius)}
-  .msq-empty .ic{color:var(--muted)}.msq-empty b{font-size:15px}.msq-empty span{color:var(--muted);font-size:12.5px;max-width:260px}
-  .live-managebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 12px;padding:10px 12px;
-    background:linear-gradient(180deg,#1a2230,#121a24);border:1px solid rgba(31,181,122,.3);border-radius:var(--radius)}
-  .live-managebar .lmb-info{font-size:12px;color:var(--muted);line-height:1.3}
-  .lmb-btn{flex:none;background:var(--green);border:1px solid var(--green);color:#06140e;font:inherit;font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;cursor:pointer}
-  .lmb-btn:disabled{opacity:.5;cursor:not-allowed;background:var(--panel-2);color:var(--muted);border-color:var(--line-2)}
-  .live-hint{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:11px 2px;font-size:12px;color:var(--muted)}
-  .live-hint b{color:var(--ink)}
-  .live-hint .lh-warn{color:var(--muted-2)}
-  .live-selector{margin:6px 0 4px}
-  .ls-cap{font-size:11.5px;color:var(--muted);margin:0 2px 8px;font-weight:600}
-  .ls-none{color:var(--muted-2);font-size:13px;padding:16px;text-align:center;background:var(--panel-2);border:1px dashed var(--line);border-radius:var(--radius)}
-  .ls-strip{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
-  .ls-strip::-webkit-scrollbar{height:7px}.ls-strip::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:999px}
-  .lchip{flex:0 0 auto;width:148px;background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:var(--radius);padding:9px 10px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
-  .lchip .lc-row{display:flex;align-items:center;justify-content:center;gap:7px}
-  .lchip .lf{width:24px;height:16px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
-  .lchip .lc-sc{font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
-  .lchip .lc-names{font-size:11px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lchip .lc-meta{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:6px;font-size:10.5px;font-weight:700}
-  .lchip .lc-live{color:var(--green)}.lchip .lc-soon{color:var(--muted)}.lchip .lc-done{color:var(--muted-2)}
-  .lchip .lc-has{color:var(--green)}.lchip .lc-no{color:var(--muted-2)}
-  .lchip.sel{border-color:rgba(31,181,122,.6);box-shadow:0 0 0 1px rgba(31,181,122,.35)}
-  .lchip.nostream{opacity:.7}
-  .lc-manage{display:flex;gap:5px;margin-top:8px}
-  .lc-inp{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line-2);border-radius:8px;color:var(--ink);font:inherit;font-size:11px;padding:6px 7px}
-  .lc-inp.bad{border-color:var(--red,#e0556b)}
-  .lc-save{flex:none;background:var(--panel-2);border:1px solid var(--line-2);color:var(--ink);font:inherit;font-weight:700;font-size:11px;padding:6px 9px;border-radius:8px;cursor:pointer}
-
-  /* menu: como assistir (aqui flutuante / na CazéTV) */
-  .wc-ov{position:fixed;inset:0;z-index:150;background:rgba(7,11,16,.72);display:flex;align-items:flex-end;justify-content:center;padding-bottom:max(0px,env(safe-area-inset-bottom))}
-  @media(min-width:560px){.wc-ov{align-items:center;padding:16px}}
-  .wc-box{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line-2);border-radius:16px 16px 0 0;padding:18px 16px 16px;box-shadow:0 -10px 40px rgba(0,0,0,.5)}
-  @media(min-width:560px){.wc-box{border-radius:16px}}
-  .wc-title{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.02em}
-  .wc-sub{color:var(--muted);font-size:13px;margin:2px 0 14px}
-  .wc-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;text-decoration:none;color:var(--ink);background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;padding:13px 14px;margin-bottom:10px;cursor:pointer;font:inherit}
-  .wc-opt:hover{border-color:rgba(31,181,122,.5)}
-  .wc-opt .ic{color:var(--green);flex:none}
-  .wc-opt b{display:block;font-size:14.5px}
-  .wc-opt small{display:block;color:var(--muted);font-size:11.5px;margin-top:1px}
-  .wc-cancel{width:100%;background:transparent;border:0;color:var(--muted);font:inherit;font-weight:700;font-size:13px;padding:10px;cursor:pointer}
-
-  /* player flutuante (PiP próprio) — persiste entre abas, arrastável */
-  .floatplayer{position:fixed;right:12px;bottom:12px;z-index:120;display:flex;flex-direction:column;width:min(92vw,480px);background:#000;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.6)}
-  .fp-head{flex:none;display:flex;align-items:center;gap:8px;padding:7px 9px;background:linear-gradient(180deg,var(--panel),var(--panel-2));border-bottom:1px solid var(--line);cursor:move;touch-action:none;user-select:none}
-  .fp-grip{color:var(--muted-2);font-size:12px;letter-spacing:-3px;flex:none}
-  .fp-title{flex:1;min-width:0;font-weight:800;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .fp-acts{display:flex;gap:4px;flex:none}
-  .fp-btn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--muted);cursor:pointer}
-  .fp-btn:hover{color:var(--green);border-color:rgba(31,181,122,.45)}
-  .fp-stage{position:relative;width:100%;flex:1;min-height:0;background:#000}
-  .fp-stage iframe,#fp-mount{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .fp-resize{position:absolute;right:0;bottom:0;width:24px;height:24px;cursor:nwse-resize;touch-action:none;z-index:3;
-    background:linear-gradient(135deg,transparent 0 52%,var(--line-2) 52% 62%,transparent 62% 74%,var(--line-2) 74% 84%,transparent 84%)}
-  /* fallback quando o embed falha (ex.: erro 153 em file://) */
-  .ytfail{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:16px;background:#0b0f14;color:var(--muted)}
-  .ytfail b{color:var(--ink);font-size:14.5px}
-  .ytfail span{font-size:12px;max-width:300px;line-height:1.35}
-  .ytfail-btn{display:inline-flex;align-items:center;gap:6px;margin-top:4px;background:var(--green);color:#06140e;font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;text-decoration:none}
-  .ytfail-btn .ic{color:#06140e}
-  .fp-yt{text-decoration:none}
-
   /* ===== preview do chaveamento embutido no card (mata-mata) ===== */
   .kobrk{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:11px 12px 12px;background:rgba(255,255,255,.02)}
   .kobrk-cap{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);line-height:1.3;margin-bottom:11px}
@@ -784,9 +684,9 @@ const TEAMS={
  41:{pt:"Portugal",code:"pt"},42:{pt:"RD Congo",code:"cd"},43:{pt:"Uzbequistão",code:"uz"},44:{pt:"Colômbia",code:"co"},
  45:{pt:"Inglaterra",code:"gb-eng"},46:{pt:"Croácia",code:"hr"},47:{pt:"Gana",code:"gh"},48:{pt:"Panamá",code:"pa"}
 };
-const PLAYERS=["Delay","Boy","Gerv","Bipe","Sergin","Zanele","Greg","Patras","Cunhado","Paia"];
+const PLAYERS=["Delay","Boy","Gerv","Bipe","Sergin","Zanele","Greg","Patras","Paia"];
 // Pontuação acumulada das rodadas anteriores (antes do app)
-const BASELINE={Delay:114,Boy:111,Gerv:105,Bipe:99,Sergin:99,Zanele:90,Greg:90,Patras:87,Cunhado:78,Paia:66};
+const BASELINE={Delay:0,Boy:0,Gerv:0,Bipe:0,Sergin:0,Zanele:0,Greg:0,Patras:0,Paia:0}; // zerado: pontuação vem só dos palpites preenchidos (baselines pré-app: Delay:114, Boy:111, Gerv:105, Bipe:99, Sergin:99, Zanele:90, Greg:90, Patras:87, Paia:66)
 // Avatar abstrato + cor de cada jogador. base = cor primária (suave); light/accent = secundárias;
 // motif = composição geométrica. A cor (base) é usada no ranking; um tom neutro (pSoft) na corrida/gráfico.
 const PLAYER_META={
@@ -798,7 +698,6 @@ const PLAYER_META={
   Zanele: {base:"#A95FD0", light:"#E2A9F2", accent:"#5C2E86", motif:"zigzag"},
   Greg:   {base:"#3FB0D9", light:"#A9E6F7", accent:"#E0D24A", motif:"overlap"},
   Patras: {base:"#6473D6", light:"#B0B8FF", accent:"#33406F", motif:"diamond"},
-  Cunhado:{base:"#9CC65A", light:"#DDF0A6", accent:"#5E8A2E", motif:"arcs"},
   Paia:   {base:"#E8775E", light:"#FFB6A2", accent:"#7E3A6B", motif:"bars"}
 };
 const _DEFMETA={base:"#3a4654",light:"#5b6b7d",accent:"#8A98A8",motif:"diag"};
@@ -974,32 +873,7 @@ async function autoFetchLive(){
   let changed=false;
   need.forEach(g=>{ const it=d.items.find(it=>it.id&&it.id.videoId&&it.snippet&&ytTitleGame(it.snippet.title,g));
     if(it){ STREAMS[String(g.id)]=it.id.videoId; streamUpsert(String(g.id)); changed=true; } });
-  if(changed){ saveStreams(); if(activeTab==="live"){_liveSig=null;renderLive();} }
-}
-// BACKFILL manual: passado (q="JOGO COMPLETO") + agendadas (eventType=upcoming), paginado e capado
-async function backfillStreams(btn){
-  if(!YT_API_KEY){alert("Configure a YT_API_KEY no código para usar a busca automática.");return;}
-  if(btn){btn.disabled=true;btn.dataset.t=btn.textContent;btn.textContent="Buscando…";}
-  const run=async(params,games,maxPages,phrase)=>{
-    let token=null,pages=0,found=0;const rem=games.slice();
-    while(rem.length&&pages<maxPages){ const p=Object.assign({},params); if(token)p.pageToken=token;
-      const d=await ytSearch(p); if(!d||!d.items)break;
-      d.items.forEach(it=>{ const vid=it.id&&it.id.videoId,ti=it.snippet&&it.snippet.title; if(!vid||!ti)return;
-        const set=new Set(ytNorm(ti).split(" ")); if(phrase&&!phrase.every(w=>set.has(w)))return;
-        for(let i=rem.length-1;i>=0;i--){ const g=rem[i]; if(ytTeamIn(+g.home_team_id,set)&&ytTeamIn(+g.away_team_id,set)){ STREAMS[String(g.id)]=vid; streamUpsert(String(g.id)); found++; rem.splice(i,1); break; } }
-      });
-      token=d.nextPageToken; pages++; if(!token)break;
-    }
-    return found;
-  };
-  const past=GAMES.filter(g=>classify(g)==="finished"&&!STREAMS[String(g.id)]);
-  const soon=GAMES.filter(g=>classify(g)==="upcoming"&&!STREAMS[String(g.id)]);
-  let n=0;
-  try{ n+=await run({q:"JOGO COMPLETO",order:"date"},past,6,["completo"]); n+=await run({eventType:"upcoming"},soon,3,null); }catch(e){}
-  saveStreams();
-  if(btn){btn.disabled=false;btn.textContent=btn.dataset.t||"Buscar no YouTube";}
-  alert(n?("Encontrei "+n+" transmissão(ões) e salvei."):"Nenhuma transmissão nova encontrada agora.");
-  _liveSig=null;renderLive();
+  if(changed){ saveStreams(); }
 }
 
 /* ===== SCORING ===== */
@@ -1158,10 +1032,10 @@ function renderHistoryList(listEl,g){
     listEl.appendChild(row);
   });
 }
-// botão "assistir" — abre o menu (aqui flutuante / na CazéTV). Só aparece se o jogo tem link.
+// botão "assistir" — abre a transmissão direto no YouTube (nova aba/app). Só aparece se o jogo tem link.
 function watchLink(gid){
-  if(!STREAMS[String(gid)])return"";
-  return `<button class="cardshare watchbtn" type="button" data-gid="${gid}" title="Assistir">${icon("play",13)}</button>`;
+  const yt=STREAMS[String(gid)];if(!yt)return"";
+  return `<a class="cardshare watchbtn" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener" data-gid="${gid}" title="Assistir no YouTube">${icon("play",13)}</a>`;
 }
 function buildHistoryCard(g){
   const k=kickParts(g);const[ra,rb]=res(g);const key="h"+g.id;
@@ -1333,14 +1207,11 @@ function buildGeral(){
 
 /* ===================== ABAS / NAVEGAÇÃO ===================== */
 let activeTab="bolao";
-const TABS=[["bolao","ball","Bolão"],["live","tv","Assistir jogos"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["corrida","race","Corrida"]];
+const TABS=[["bolao","ball","Bolão"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["corrida","race","Corrida"]];
 function renderActive(){
   if(activeTab!=="corrida"){stopRace();}
   if(activeTab!=="bolao"){stopCountdown();}
-  if(activeTab!=="live"){stopLive();}
-  document.body.classList.toggle("watch-mode",activeTab==="live"); // tela limpa pros vídeos
   if(activeTab==="bolao")render();
-  else if(activeTab==="live")renderLive();
   else if(activeTab==="grupos")renderGroups();
   else if(activeTab==="mata")renderBracket();
   else if(activeTab==="corrida")renderRace();
@@ -1355,341 +1226,8 @@ function buildTabs(){
   });
 }
 
-/* ===================== AO VIVO / MOSAICO (CazéTV) =====================
-   Front-first: lê o youtube_id de STREAMS (Supabase match_streams -> localStorage -> mem).
-   Modelo "switcher com foco" que degrada sozinho: Android toca os 2 e só troca o áudio;
-   iOS toca um por vez (pausa o não-focado), pois o iPhone não roda 2 vídeos juntos.
-   IFrame Player API (não iframe cru) p/ controlar mute/play por código. */
-let _liveSig=null,liveSel=[],liveManage=false,_players=[],_liveFocus=null,liveLayout=null; // liveLayout: null=auto, "stack" | "side"
-let _ytReady=false,_ytLoading=false,_ytWaiters=[],_liveForceIOS=null; // _liveForceIOS: override só p/ teste
-const IS_IOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent||"")||(navigator.platform==="MacIntel"&&(navigator.maxTouchPoints||0)>1);
-const liveIOS=()=>_liveForceIOS==null?IS_IOS():_liveForceIOS;
+// nome PT do time (usado no auto-fetch da CazéTV)
 const tmName=id=>(TEAMS[id]&&TEAMS[id].pt)||"—";
-const LV_ICONS={
-  vol:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9.2a3.4 3.4 0 0 1 0 5.6M18 6.8a7 7 0 0 1 0 10.4"/></svg>',
-  mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16.5 10l5 4M21.5 10l-5 4"/></svg>',
-  ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg>',
-  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  stack:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="7" rx="1.5"/><rect x="4" y="13" width="16" height="7" rx="1.5"/></svg>',
-  side:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="7" height="16" rx="1.5"/><rect x="13" y="4" width="7" height="16" rx="1.5"/></svg>'
-};
-const licon=(n,sz)=>`<span class="ic" style="width:${sz||16}px;height:${sz||16}px">${LV_ICONS[n]||""}</span>`;
-const audioIcon=on=>licon(on?"vol":"mute",15);
-// layout do mosaico de 2: null=auto (orientação), "stack"=empilhado, "side"=lado a lado
-const _layAuto=()=>(window.innerWidth>window.innerHeight)?"side":"stack";
-const layoutIcon=()=>licon((liveLayout||_layAuto())==="side"?"stack":"side",15); // mostra o alvo
-function toggleLayout(){
-  const cur=liveLayout||_layAuto();
-  liveLayout=(cur==="side")?"stack":"side";
-  const mos=document.querySelector(".livewrap .mosaic");
-  if(mos){mos.classList.remove("lay-auto","lay-stack","lay-side");mos.classList.add("lay-"+liveLayout);sizeMosaic();}
-  const b=document.querySelector(".lh-lay");if(b)b.innerHTML=layoutIcon();
-}
-
-// carrega a IFrame Player API só quando precisa
-function loadYT(cb){
-  if(_ytReady){cb&&cb();return;}
-  if(cb)_ytWaiters.push(cb);
-  if(window.YT&&window.YT.Player){_ytReady=true;_ytLoading=false;_ytWaiters.splice(0).forEach(f=>{try{f();}catch(e){}});return;}
-  if(_ytLoading)return;_ytLoading=true;
-  const prev=window.onYouTubeIframeAPIReady;
-  window.onYouTubeIframeAPIReady=function(){ if(typeof prev==="function")try{prev();}catch(e){} _ytReady=true; _ytWaiters.splice(0).forEach(f=>{try{f();}catch(e){}}); };
-  const s=document.createElement("script");s.src="https://www.youtube.com/iframe_api";s.async=true;document.head.appendChild(s);
-}
-function stopLive(){ _players.forEach(o=>{try{o.yp&&o.yp.destroy&&o.yp.destroy();}catch(e){}}); _players=[]; }
-
-/* ===== assistir: escolha (aqui flutuante / na CazéTV) + player flutuante (PiP próprio) ===== */
-// o embed do YouTube exige origem http(s); de file:// dá erro (150/153). Passamos a origem real quando dá.
-const _httpOrigin=()=>location.protocol.indexOf("http")===0?location.origin:null;
-function ytFailHTML(gid){
-  const yt=STREAMS[String(gid)]||"";
-  const why=location.protocol==="file:"
-    ?"Abrindo o arquivo local (file://) o YouTube bloqueia o vídeo embutido — no site publicado funciona normal."
-    :"Este vídeo não permite player embutido aqui.";
-  return `<div class="ytfail"><b>Não dá pra embutir aqui</b><span>${why}</span><a class="ytfail-btn" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">${licon("ext",14)} Assistir no YouTube</a></div>`;
-}
-function chooseWatch(gid){
-  gid=String(gid);const yt=STREAMS[gid];if(!yt)return;
-  const g=GAMES.find(x=>String(x.id)===gid);
-  const title=g?(tmName(g.home_team_id)+" × "+tmName(g.away_team_id)):"Assistir jogo";
-  closeChoose();
-  const ov=document.createElement("div");ov.id="watchchoose";ov.className="wc-ov";
-  ov.innerHTML=`<div class="wc-box" role="dialog" aria-modal="true">
-      <div class="wc-title">${title}</div>
-      <p class="wc-sub">Como você quer assistir?</p>
-      <button class="wc-opt wc-here" type="button">${icon("tv",18)}<span><b>Assistir aqui</b><small>player flutuante — dá pra navegar enquanto assiste</small></span></button>
-      <a class="wc-opt wc-caze" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">${licon("ext",18)}<span><b>Abrir na CazéTV</b><small>vai pro YouTube em outra aba</small></span></a>
-      <button class="wc-cancel" type="button">Cancelar</button>
-    </div>`;
-  document.body.appendChild(ov);
-  ov.querySelector(".wc-here").onclick=()=>{closeChoose();openFloat(gid);};
-  ov.querySelector(".wc-caze").onclick=()=>{closeChoose();};
-  ov.querySelector(".wc-cancel").onclick=closeChoose;
-  ov.addEventListener("click",e=>{if(e.target===ov)closeChoose();});
-}
-function closeChoose(){const o=document.getElementById("watchchoose");if(o&&o.parentNode)o.parentNode.removeChild(o);}
-
-let _floatYT=null,_floatGid=null;
-function openFloat(gid){
-  gid=String(gid);const yt=STREAMS[gid];if(!yt)return;
-  closeFloat();_floatGid=gid;
-  const g=GAMES.find(x=>String(x.id)===gid);
-  const box=document.createElement("div");box.id="floatplayer";box.className="floatplayer";
-  box.innerHTML=`<div class="fp-head">
-      <span class="fp-grip">⋮⋮</span>
-      <span class="fp-title">${g?(tmName(g.home_team_id)+" × "+tmName(g.away_team_id)):"Jogo"}</span>
-      <span class="fp-acts">
-        <a class="fp-btn fp-yt" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener" title="Abrir no YouTube">${licon("ext",13)}</a>
-        <button class="fp-btn fp-tab" type="button" title="Abrir na aba Assistir jogos">${icon("tv",14)}</button>
-        <button class="fp-btn fp-close" type="button" title="Fechar">${licon("x",13)}</button>
-      </span>
-    </div>
-    <div class="fp-stage"></div>
-    <div class="fp-resize" title="Redimensionar"></div>`;
-  document.body.appendChild(box);
-  // tamanho default maior (≈16:9 + barra do topo), limitado à viewport
-  const vw=window.innerWidth||360,vh=window.innerHeight||640;
-  let w=Math.min(Math.round(vw*0.92),520),h=Math.round(w*9/16)+40;
-  if(h>Math.round(vh*0.82))h=Math.round(vh*0.82);
-  box.style.width=w+"px";box.style.height=h+"px";
-  fpDrag(box,box.querySelector(".fp-head"));
-  fpResize(box,box.querySelector(".fp-resize"));
-  box.querySelector(".fp-close").onclick=closeFloat;
-  box.querySelector(".fp-tab").onclick=()=>{const id=_floatGid;closeFloat();if(activeTab!=="live"){activeTab="live";buildTabs();}liveSel=[id];_liveSig=null;renderActive();window.scrollTo(0,0);};
-  // iframe simples (não a IFrame API): mais tolerante p/ transmissão ao vivo e evita o erro de origem/embed.
-  const st=box.querySelector(".fp-stage");
-  if(location.protocol==="file:"){ st.innerHTML=ytFailHTML(gid); return; } // de file:// o YouTube bloqueia o embed
-  const o=_httpOrigin();
-  const ifr=document.createElement("iframe");
-  ifr.src="https://www.youtube.com/embed/"+yt+"?autoplay=1&playsinline=1&rel=0&modestbranding=1"+(o?"&origin="+encodeURIComponent(o):"");
-  ifr.setAttribute("allow","autoplay; encrypted-media; picture-in-picture; fullscreen");
-  ifr.setAttribute("allowfullscreen","");ifr.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
-  st.appendChild(ifr);
-}
-function closeFloat(){ if(_floatYT){try{_floatYT.destroy();}catch(e){}_floatYT=null;} const b=document.getElementById("floatplayer");if(b&&b.parentNode)b.parentNode.removeChild(b);_floatGid=null; }
-function fpDrag(box,handle){
-  let sx,sy,ox,oy,drag=false;
-  const move=e=>{if(!drag)return;let nx=ox+(e.clientX-sx),ny=oy+(e.clientY-sy);const r=box.getBoundingClientRect();
-    nx=Math.max(4,Math.min((window.innerWidth||360)-r.width-4,nx));ny=Math.max(4,Math.min((window.innerHeight||640)-r.height-4,ny));
-    box.style.left=nx+"px";box.style.top=ny+"px";};
-  const up=()=>{drag=false;document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);};
-  handle.addEventListener("pointerdown",e=>{if(e.target.closest(".fp-btn"))return;drag=true;sx=e.clientX;sy=e.clientY;
-    const r=box.getBoundingClientRect();ox=r.left;oy=r.top;box.style.right="auto";box.style.bottom="auto";box.style.left=ox+"px";box.style.top=oy+"px";
-    document.addEventListener("pointermove",move);document.addEventListener("pointerup",up);e.preventDefault();});
-}
-function fpResize(box,handle){
-  let sw,sh,sx,sy,res=false;
-  const move=e=>{if(!res)return;
-    let nw=Math.max(240,sw+(e.clientX-sx)),nh=Math.max(170,sh+(e.clientY-sy));
-    nw=Math.min(nw,(window.innerWidth||360)-box.offsetLeft-6);
-    nh=Math.min(nh,(window.innerHeight||640)-box.offsetTop-6);
-    box.style.width=nw+"px";box.style.height=nh+"px";};
-  const up=()=>{res=false;document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);};
-  handle.addEventListener("pointerdown",e=>{res=true;sx=e.clientX;sy=e.clientY;
-    const r=box.getBoundingClientRect();sw=r.width;sh=r.height;box.style.right="auto";box.style.bottom="auto";box.style.left=r.left+"px";box.style.top=r.top+"px";
-    document.addEventListener("pointermove",move);document.addEventListener("pointerup",up);e.preventDefault();e.stopPropagation();});
-}
-// deixa o mosaico ocupar o espaço máximo da viewport (só quando há jogo aberto)
-function sizeMosaic(){
-  const mos=document.querySelector(".livewrap .mosaic");if(!mos)return;
-  if(!liveSel.length){mos.style.height="";return;}
-  const top=mos.getBoundingClientRect().top;
-  mos.style.height=Math.max(240,(window.innerHeight||640)-top-12)+"px";
-}
-
-function liveCandidates(){
-  const byTs=(a,b)=>kickParts(a).ts-kickParts(b).ts;
-  const live=GAMES.filter(g=>classify(g)==="live").sort(byTs);
-  const soon=GAMES.filter(g=>classify(g)==="upcoming"&&STREAMS[String(g.id)]).sort(byTs);
-  const soonAll=GAMES.filter(g=>classify(g)==="upcoming").sort(byTs).slice(0,8);
-  const past=GAMES.filter(g=>classify(g)==="finished"&&STREAMS[String(g.id)]).sort((a,b)=>(+b.id)-(+a.id)); // recentes primeiro
-  return{live,soon,soonAll,past};
-}
-function liveAutoSel(cand){
-  liveSel=liveSel.filter(id=>STREAMS[id]&&GAMES.some(g=>String(g.id)===id)); // mantém os escolhidos (inclui passados)
-  if(!liveSel.length)liveSel=cand.live.filter(g=>STREAMS[String(g.id)]).slice(0,2).map(g=>String(g.id)); // auto-seleciona só os ao vivo
-}
-function liveToggle(id){
-  id=String(id);const i=liveSel.indexOf(id);const adding=i<0;
-  if(i>=0)liveSel.splice(i,1);
-  else{ if(liveSel.length>=2)liveSel.shift(); liveSel.push(id); }
-  _liveSig=null;renderLive();
-  // ao adicionar, sobe pro mosaico (no celular ele fica acima da lista, fora da tela)
-  if(adding){const mos=document.querySelector(".livewrap .mosaic");if(mos&&mos.scrollIntoView)mos.scrollIntoView({behavior:"smooth",block:"start"});}
-}
-function toggleLiveManage(){
-  if(liveManage){liveManage=false;_liveSig=null;renderLive();return;}
-  const pw=prompt("Senha para gerenciar as transmissões:");
-  if(pw==null)return;
-  if(pw===ADMIN_PW){liveManage=true;_liveSig=null;renderLive();}
-  else alert("Senha incorreta.");
-}
-
-function renderLive(){
-  const app=document.getElementById("app");if(!app)return;
-  const cand=liveCandidates();liveAutoSel(cand);
-  const mosSig=liveSel.map(id=>id+":"+(STREAMS[id]||"")).join(",")+"|"+(liveIOS()?"ios":"and")+"|"+(liveManage?"m":"")+"|"+liveSel.join(">");
-  if(_liveSig===mosSig&&app.querySelector(".livewrap")){refreshLiveChrome(cand);return;} // não recria os iframes
-  _liveSig=mosSig;stopLive();app.innerHTML="";
-  const wrap=document.createElement("div");wrap.className="livewrap";
-  wrap.appendChild(liveHeader(cand));
-  if(liveManage)wrap.appendChild(liveManageBar());
-  const mos=document.createElement("div");mos.className="mosaic mos-"+Math.max(1,liveSel.length)+" lay-"+(liveLayout||"auto");
-  liveSel.forEach(id=>mos.appendChild(buildMsq(id)));
-  if(!liveSel.length)mos.appendChild(liveEmpty(cand));
-  wrap.appendChild(mos);
-  wrap.appendChild(liveHint(cand));
-  wrap.appendChild(liveSelector(cand));
-  app.appendChild(wrap);
-  sizeMosaic();setTimeout(sizeMosaic,60); // ocupa o espaço máximo
-  const playable=liveSel.filter(id=>STREAMS[id]);
-  if(!_liveFocus||!liveSel.includes(_liveFocus))_liveFocus=playable[0]||liveSel[0]||null;
-  if(playable.length)loadYT(()=>{playable.forEach(id=>mountPlayer(id));updateAudioUI();});
-  updateAudioUI();
-}
-function refreshLiveChrome(cand){
-  const wrap=document.querySelector(".livewrap");if(!wrap)return;
-  const h=wrap.querySelector(".live-head");if(h)h.replaceWith(liveHeader(cand));
-  const sel=wrap.querySelector(".live-selector");if(sel)sel.replaceWith(liveSelector(cand));
-  liveSel.forEach(updateMsqMeta);updateAudioUI();
-}
-
-function liveHeader(cand){
-  const h=document.createElement("div");h.className="live-head";
-  const n=cand.live.length;
-  const showLay=liveSel.length===2;
-  h.innerHTML=`<span class="lh-title">${icon("tv",18)}<b>Assistir jogos</b><small>${n?n+" jogo"+(n>1?"s":"")+" ao vivo":"escolha um jogo abaixo"}</small></span>`+
-    `<span class="lh-acts">`+
-      (showLay?`<button class="cardshare lh-lay" type="button" title="Empilhado / lado a lado">${layoutIcon()}</button>`:"")+
-      `<button class="cardshare livelock${liveManage?" on":""}" type="button" title="${liveManage?"Sair do modo gerenciar":"Gerenciar transmissões (senha)"}">${icon(liveManage?"edit":"lock",13)}</button>`+
-    `</span>`;
-  if(showLay)h.querySelector(".lh-lay").onclick=toggleLayout;
-  h.querySelector(".livelock").onclick=toggleLiveManage;
-  return h;
-}
-function liveManageBar(){
-  const b=document.createElement("div");b.className="live-managebar";
-  const info=document.createElement("span");info.className="lmb-info";
-  info.innerHTML=YT_API_KEY?"Busca automática na CazéTV — preenche o passado + as agendadas que faltam.":"Sem chave da API — modo só manual.";
-  const btn=document.createElement("button");btn.className="lmb-btn";btn.type="button";btn.textContent="Buscar no YouTube";btn.disabled=!YT_API_KEY;
-  btn.onclick=()=>backfillStreams(btn);
-  b.appendChild(info);b.appendChild(btn);return b;
-}
-function liveHint(cand){
-  const d=document.createElement("div");d.className="live-hint";
-  const mode=liveIOS()
-    ?"No iPhone toca <b>um por vez</b> (o iOS não roda dois vídeos juntos) — toque num quadro pra trocar o foco."
-    :"Os dois tocam juntos — toque num quadro pra mandar o <b>áudio</b> pra ele.";
-  d.innerHTML=`<span>${mode}</span><span class="lh-warn">Vídeo ao vivo puxa dados e bateria.</span>`;
-  return d;
-}
-function liveEmpty(cand){
-  const e=document.createElement("div");e.className="msq-empty";
-  if(!cand.live.length)e.innerHTML=`${icon("tv",28)}<b>Escolha um jogo pra assistir.</b><span>Toque num jogo abaixo — ao vivo, próximos ou já passados (pra rever).</span>`;
-  else e.innerHTML=`${icon("tv",28)}<b>Tem jogo ao vivo, mas sem vídeo cadastrado.</b><span>${liveManage?"Cole o link do YouTube nos jogos abaixo.":"Abra o cadeado no canto pra adicionar o link da CazéTV."}</span>`;
-  return e;
-}
-function liveSelector(cand){
-  const box=document.createElement("div");box.className="live-selector";
-  const list=liveManage?cand.live.concat(cand.soonAll,cand.past):cand.live.concat(cand.soon,cand.past);
-  const seen={},games=[];list.forEach(g=>{const id=String(g.id);if(seen[id])return;seen[id]=1;games.push(g);});
-  const cap=document.createElement("div");cap.className="ls-cap";
-  cap.textContent=liveManage?"Gerenciar — cole o link da transmissão de cada jogo":"Toque pra escolher até 2 jogos (ao vivo, próximos ou já passados)";
-  box.appendChild(cap);
-  if(!games.length){const n=document.createElement("div");n.className="ls-none";n.textContent="Nenhum jogo com transmissão disponível ainda.";box.appendChild(n);return box;}
-  const strip=document.createElement("div");strip.className="ls-strip";
-  games.forEach(g=>strip.appendChild(liveChip(g)));
-  box.appendChild(strip);
-  return box;
-}
-function liveChip(g){
-  const id=String(g.id),sel=liveSel.includes(id),has=!!STREAMS[id],cl=classify(g),kp=kickParts(g);
-  const c=document.createElement("div");c.className="lchip"+(sel?" sel":"")+(has?"":" nostream");c.dataset.gid=id;
-  const badge=cl==="live"?`<span class="lc-live">● ${liveTxt(g)}</span>`:cl==="finished"?`<span class="lc-done">Final · ${kp.d}</span>`:`<span class="lc-soon">${kp.d} ${kp.h}</span>`;
-  c.innerHTML=`<div class="lc-row">
-      ${flag(g.home_team_id,22)?`<img class="lf" src="${flag(g.home_team_id,22)}" alt="">`:""}
-      <span class="lc-sc">${cl==="upcoming"?"×":(g.home_score||0)+"–"+(g.away_score||0)}</span>
-      ${flag(g.away_team_id,22)?`<img class="lf" src="${flag(g.away_team_id,22)}" alt="">`:""}
-    </div>
-    <div class="lc-names">${tmName(g.home_team_id)} × ${tmName(g.away_team_id)}</div>
-    <div class="lc-meta">${badge}${has?`<span class="lc-has">${sel?"no mosaico ✓":"assistir"}</span>`:'<span class="lc-no">sem vídeo</span>'}</div>`;
-  // card inteiro clicável (menos a área de gerenciar link); sem vídeo só clica no modo gerenciar
-  c.onclick=ev=>{ if(ev.target.closest(".lc-manage"))return; if(!has&&!liveManage)return; liveToggle(id); };
-  if(liveManage){
-    const mg=document.createElement("div");mg.className="lc-manage";
-    const inp=document.createElement("input");inp.className="lc-inp";inp.type="text";inp.placeholder="link/ID do YouTube";inp.value=STREAMS[id]||"";
-    const btn=document.createElement("button");btn.className="lc-save";btn.type="button";btn.textContent="Salvar";
-    btn.onclick=()=>{ const raw=inp.value.trim(),v=ytId(raw); if(raw&&!v){inp.classList.add("bad");return;} inp.classList.remove("bad");
-      if(v)STREAMS[id]=v; else delete STREAMS[id];
-      saveStreams();streamUpsert(id);_liveSig=null;renderLive(); };
-    inp.onkeydown=ev=>{if(ev.key==="Enter")btn.onclick();};
-    mg.appendChild(inp);mg.appendChild(btn);c.appendChild(mg);
-  }
-  return c;
-}
-
-function buildMsq(id){
-  id=String(id);const g=GAMES.find(x=>String(x.id)===id),yt=STREAMS[id],cl=g?classify(g):"";
-  const q=document.createElement("div");q.className="msq";q.dataset.gid=id;
-  const head=document.createElement("div");head.className="msq-head";
-  head.innerHTML=`<div class="msq-teams">
-      ${g&&flag(g.home_team_id,30)?`<img class="lf" src="${flag(g.home_team_id,30)}">`:""}
-      <span class="msq-sc">${cl==="upcoming"||!g?"×":(g.home_score||0)+"–"+(g.away_score||0)}</span>
-      ${g&&flag(g.away_team_id,30)?`<img class="lf" src="${flag(g.away_team_id,30)}">`:""}
-      <span class="msq-live">${cl==="live"?"● "+liveTxt(g):cl==="finished"?"Final":(g?"agendado":"")}</span>
-    </div>
-    <div class="msq-actions">
-      <button class="msq-aud" type="button" title="Áudio">${audioIcon(false)}</button>
-      ${yt?`<a class="msq-ext" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener" title="Abrir no YouTube">${licon("ext",14)}</a>`:""}
-      <button class="msq-close" type="button" title="Tirar do mosaico">${licon("x",13)}</button>
-    </div>`;
-  const stage=document.createElement("div");stage.className="msq-stage";
-  if(yt){const mount=document.createElement("div");mount.className="msq-mount";mount.id="ytp-"+id;stage.appendChild(mount);}
-  else stage.innerHTML=`<div class="msq-novideo">Sem vídeo${liveManage?"":" — adicione no cadeado"}</div>`;
-  q.appendChild(head);q.appendChild(stage);
-  const xb=q.querySelector(".msq-close");if(xb)xb.onclick=ev=>{ev.stopPropagation();liveToggle(id);};
-  q.onclick=ev=>{if(ev.target.closest(".msq-ext,.msq-close"))return;focusLive(id);};
-  return q;
-}
-function mountPlayer(id){
-  id=String(id);const yt=STREAMS[id];if(!yt)return;
-  const el=document.getElementById("ytp-"+id);if(!el||!(window.YT&&YT.Player))return;
-  const wantFocus=(id===_liveFocus);
-  try{
-    const yp=new YT.Player(el,{
-      videoId:yt,
-      playerVars:Object.assign({autoplay:1,mute:1,playsinline:1,modestbranding:1,rel:0,controls:1},_httpOrigin()?{origin:_httpOrigin()}:{}),
-      events:{onReady:e=>{try{ e.target.mute();
-        if(wantFocus||!liveIOS())e.target.playVideo&&e.target.playVideo();
-        else e.target.pauseVideo&&e.target.pauseVideo();
-      }catch(err){} updateAudioUI();},
-        onError:()=>{const q=document.querySelector('.msq[data-gid="'+id+'"]'),st=q&&q.querySelector(".msq-stage");if(st)st.innerHTML=ytFailHTML(id);}}
-    });
-    _players.push({gid:id,yp});
-  }catch(e){}
-}
-function focusLive(id){
-  id=String(id);_liveFocus=id;
-  _players.forEach(o=>{try{
-    if(o.gid===id){o.yp.unMute&&o.yp.unMute();o.yp.playVideo&&o.yp.playVideo();}
-    else{o.yp.mute&&o.yp.mute();if(liveIOS())o.yp.pauseVideo&&o.yp.pauseVideo();}
-  }catch(e){}});
-  updateAudioUI();
-}
-function updateAudioUI(){
-  document.querySelectorAll(".msq").forEach(q=>{
-    const on=q.dataset.gid===_liveFocus;
-    q.classList.toggle("focus",on);
-    const b=q.querySelector(".msq-aud");if(b){b.classList.toggle("on",on);b.innerHTML=audioIcon(on);}
-  });
-}
-function updateMsqMeta(id){
-  id=String(id);const g=GAMES.find(x=>String(x.id)===id);if(!g)return;
-  const q=document.querySelector('.msq[data-gid="'+id+'"]');if(!q)return;
-  const cl=classify(g),sc=q.querySelector(".msq-sc"),lv=q.querySelector(".msq-live");
-  if(sc)sc.textContent=cl==="upcoming"?"×":(g.home_score||0)+"–"+(g.away_score||0);
-  if(lv)lv.textContent=cl==="live"?"● "+liveTxt(g):cl==="finished"?"Final":"agendado";
-}
 
 let loaderGone=false;
 function hideLoader(){if(loaderGone)return;loaderGone=true;const l=document.getElementById("loader");
@@ -3569,14 +3107,104 @@ const _ptic=document.querySelector("#ptr .ic");if(_ptic)_ptic.innerHTML=ICONS.ba
   const ov=document.getElementById("vidov");if(ov)ov.addEventListener("click",e=>{if(e.target===ov)closeVideoOverlay();});
 })();
 document.getElementById("refresh").onclick=()=>{setConn("","Atualizando…");tick(false);};
-// clique no botão "assistir" (qualquer card) -> menu de escolha
-document.addEventListener("click",e=>{const wb=e.target.closest&&e.target.closest(".watchbtn");if(wb&&wb.dataset.gid){e.preventDefault();e.stopPropagation();chooseWatch(wb.dataset.gid);}});
-// mantém o mosaico no espaço máximo quando a tela muda
-window.addEventListener("resize",()=>{if(activeTab==="live")sizeMosaic();});
-window.addEventListener("orientationchange",()=>{if(activeTab==="live")setTimeout(sizeMosaic,150);});
 buildTabs();
 tick(true);
 setInterval(()=>tick(false),30000);
+
+/* ============================================================
+   FERRAMENTA TEMPORÁRIA — preenchimento retroativo de palpites
+   Abrir: acrescente #preencher no fim da URL (pede a senha ADMIN_PW).
+   Escolha o jogador no topo e vá digitando. Tab pula de campo e, no
+   2º placar, pula pro próximo jogo (Enter faz o mesmo). Salva na hora
+   (local + Supabase). Para REMOVER: apague todo este bloco.
+   ============================================================ */
+let _fillPlayer=PLAYERS[0], _fillPollTimer=null;
+function fillGamesSorted(){ return GAMES.slice().sort((a,b)=>(kickParts(a).ts-kickParts(b).ts)||((+a.id)-(+b.id))); }
+function fillTeamName(id,label){ const n=tmName(+id); return (n&&n!=="—")?n:(label||"—"); }
+function fillCount(){ const p=_fillPlayer; let n=0; GAMES.forEach(g=>{ const x=(GUESS[g.id]||{})[p]; if(x&&x.a!==""&&x.a!=null&&x.b!==""&&x.b!=null)n++; }); return n; }
+function updCount(){ const el=document.getElementById("ftCount"); if(el)el.textContent="Jogador: "+_fillPlayer+" — "+fillCount()+" jogo(s) com os dois placares"; }
+function markDone(row,ia,ib){ row.classList.toggle("done",ia.value!==""&&ib.value!==""); }
+function fillEsc(e){ if(e.key==="Escape")closeFillTool(); }
+function fillKey(e){ if(e.key==="Enter"){ e.preventDefault(); const all=[...document.querySelectorAll("#ftBody .ft-inp")]; const i=all.indexOf(e.target); if(i>=0&&i+1<all.length){ all[i+1].focus(); all[i+1].select(); } } }
+function openFillTool(){
+  if(document.getElementById("fillTool"))return;
+  const pw=prompt("Senha para preencher palpites:");
+  if(pw==null){ closeFillTool(); return; }
+  if(pw!==ADMIN_PW){ alert("Senha incorreta."); closeFillTool(); return; }
+  if(!document.getElementById("fillCss")){
+    const st=document.createElement("style"); st.id="fillCss";
+    st.textContent=`#fillTool{position:fixed;inset:0;z-index:5000;background:#0b0f14;color:#eaf0f6;display:flex;flex-direction:column;font-family:Inter,system-ui,sans-serif}
+    #fillTool .ft-head{position:sticky;top:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:#121a24;border-bottom:1px solid #223}
+    #fillTool h2{font-size:16px;margin:0;font-weight:800}
+    #fillTool select{font:inherit;font-size:16px;padding:6px 8px;background:#0b0f14;color:#eaf0f6;border:1px solid #2a3a4a;border-radius:8px}
+    #fillTool .ft-count{font-size:13px;color:#8aa1b5}
+    #fillTool .ft-hint{font-size:12px;color:#5c6b7a}
+    #fillTool .ft-x{margin-left:auto;background:#22303c;color:#eaf0f6;border:0;border-radius:8px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}
+    #fillTool .ft-body{flex:1;overflow:auto;padding:6px 10px 90px}
+    #fillTool .ft-row{display:flex;align-items:center;gap:8px;padding:5px 4px;border-bottom:1px solid #18222c}
+    #fillTool .ft-row.done{background:rgba(31,181,122,.06)}
+    #fillTool .ft-idx{width:36px;color:#4d5c6b;font-size:11px;text-align:right;flex:none}
+    #fillTool .ft-date{width:44px;color:#6f8092;font-size:11px;flex:none}
+    #fillTool .ft-teams{flex:1;min-width:0;display:flex;align-items:center;gap:6px;font-size:14px}
+    #fillTool .ft-teams img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 0 0 1px #223}
+    #fillTool .ft-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #fillTool .ft-sep{color:#4d5c6b;flex:none}
+    #fillTool .ft-res{width:44px;text-align:center;color:#5c6b7a;font-size:12px;flex:none}
+    #fillTool .ft-inp{width:46px;height:42px;text-align:center;font-size:19px;font-weight:700;background:#0e1620;color:#fff;border:1px solid #2a3a4a;border-radius:8px;-moz-appearance:textfield}
+    #fillTool .ft-inp::-webkit-outer-spin-button,#fillTool .ft-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    #fillTool .ft-inp:focus{border-color:#1FB57A;outline:none;background:#0e2018}`;
+    document.head.appendChild(st);
+  }
+  const ov=document.createElement("div"); ov.id="fillTool";
+  const head=document.createElement("div"); head.className="ft-head";
+  const h2=document.createElement("h2"); h2.textContent="Preencher palpites";
+  const sel=document.createElement("select");
+  PLAYERS.forEach(pl=>{ const o=document.createElement("option"); o.value=pl; o.textContent=pl; sel.appendChild(o); });
+  sel.value=_fillPlayer; sel.onchange=()=>{ _fillPlayer=sel.value; renderFillList(); };
+  const count=document.createElement("span"); count.className="ft-count"; count.id="ftCount";
+  const hint=document.createElement("span"); hint.className="ft-hint"; hint.textContent="Tab/Enter: próximo campo · salva sozinho";
+  const x=document.createElement("button"); x.className="ft-x"; x.type="button"; x.textContent="Fechar"; x.onclick=closeFillTool;
+  head.append(h2,sel,count,hint,x);
+  const body=document.createElement("div"); body.className="ft-body"; body.id="ftBody";
+  ov.append(head,body); document.body.appendChild(ov);
+  document.addEventListener("keydown",fillEsc);
+  renderFillList();
+}
+function closeFillTool(){
+  const ov=document.getElementById("fillTool"); if(ov)ov.remove();
+  document.removeEventListener("keydown",fillEsc);
+  if(_fillPollTimer){ clearTimeout(_fillPollTimer); _fillPollTimer=null; }
+  if(location.hash==="#preencher"){ try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){ location.hash=""; } }
+}
+function renderFillList(){
+  const body=document.getElementById("ftBody"); if(!body)return;
+  const games=fillGamesSorted();
+  if(!games.length){ body.innerHTML='<div style="padding:20px;color:#8aa1b5">Carregando jogos… (se demorar, atualize a página)</div>'; _fillPollTimer=setTimeout(renderFillList,700); return; }
+  body.innerHTML=""; const p=_fillPlayer;
+  const mkInp=v=>{ const el=document.createElement("input"); el.className="ft-inp"; el.type="number"; el.min="0"; el.inputMode="numeric"; el.value=(v===0||v)?v:""; el.onkeydown=fillKey; return el; };
+  games.forEach(g=>{
+    const gx=(GUESS[g.id]||{})[p]||{a:"",b:""};
+    const row=document.createElement("div"); row.className="ft-row"+((gx.a!==""&&gx.b!=="")?" done":"");
+    const idx=document.createElement("span"); idx.className="ft-idx"; idx.textContent="#"+g.id;
+    const date=document.createElement("span"); date.className="ft-date"; date.textContent=kickParts(g).d;
+    const teams=document.createElement("span"); teams.className="ft-teams";
+    const fa=flag(+g.home_team_id,22),fb=flag(+g.away_team_id,22);
+    teams.innerHTML=(fa?`<img src="${fa}">`:"")+`<span class="ft-nm">${fillTeamName(g.home_team_id,g.home_team_label)}</span><span class="ft-sep">×</span><span class="ft-nm">${fillTeamName(g.away_team_id,g.away_team_label)}</span>`+(fb?`<img src="${fb}">`:"");
+    const ia=mkInp(gx.a),sep=document.createElement("span"); sep.className="ft-sep"; sep.textContent="×"; const ib=mkInp(gx.b);
+    const rescell=document.createElement("span"); rescell.className="ft-res";
+    if(classify(g)!=="upcoming"){ const r=res(g); rescell.textContent=r[0]+"-"+r[1]; }
+    ia.oninput=()=>{ setGuess(g.id,p,"a",ia.value); markDone(row,ia,ib); updCount(); };
+    ib.oninput=()=>{ setGuess(g.id,p,"b",ib.value); markDone(row,ia,ib); updCount(); };
+    row.append(idx,date,teams,ia,sep,ib,rescell); body.appendChild(row);
+  });
+  updCount();
+  const cur=document.activeElement, inList=cur&&cur.classList&&cur.classList.contains("ft-inp");
+  if(!inList){ const f=body.querySelector(".ft-inp"); if(f)f.focus(); }
+}
+function maybeOpenFillTool(){ if(location.hash==="#preencher")openFillTool(); }
+window.addEventListener("hashchange",maybeOpenFillTool);
+maybeOpenFillTool();
+
 </script>
 </body>
 </html>
