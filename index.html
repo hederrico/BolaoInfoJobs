@@ -720,6 +720,52 @@
   .tbrow .who .wn{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tbrow .tbx{font-size:11px;color:var(--muted);flex:none}
   .tbrow .tbpt{font-family:var(--display);font-weight:800;font-size:18px;color:var(--ink);flex:none}
+  /* ===== Comparar palpiteiros ===== */
+  .pcmpwrap{--selg:var(--green);--pcmp-lw:112px;display:flex;flex-direction:column;gap:14px}
+  .pcmp-intro{font-size:12.5px;color:var(--muted);line-height:1.45}
+  .pcmp-pick{display:flex;flex-wrap:wrap;gap:8px}
+  .pcmp-chip{display:inline-flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;cursor:pointer;font:inherit;font-weight:700;font-size:13px;color:var(--muted);user-select:none;transition:border-color .15s,color .15s}
+  .pcmp-chip .avt{flex:none}
+  .pcmp-chip:hover{color:var(--ink);border-color:var(--line-2)}
+  .pcmp-chip.on{color:var(--ink)}
+  .pcmp-chip.dis{opacity:.38;cursor:default}
+  .pcmp-chip.dis:hover{color:var(--muted);border-color:var(--line)}
+  .pcmp-chip .cx{font-size:15px;line-height:1;color:var(--muted-2);margin-left:1px}
+  .pcmp-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:34px 18px;background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px dashed var(--line-2);border-radius:var(--radius)}
+  .pcmp-empty svg{opacity:.92;margin-bottom:6px}
+  .pcmp-empty b{font-family:var(--display);font-weight:800;font-size:20px}
+  .pcmp-empty span{font-size:13px;color:var(--muted);max-width:340px;line-height:1.45}
+  .pcmp-scroll{overflow-x:clip;margin:2px 0 0}
+  .pcmp-table{min-width:100%;display:flex;flex-direction:column}
+  .pcmp-row{display:grid;align-items:stretch;gap:5px;padding:2px 0}
+  .pcmp-head{align-items:end;padding-bottom:8px;margin-bottom:2px;border-bottom:1px solid var(--line)}
+  .pcmp-ph{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:2px 2px 0;text-align:center;min-width:0}
+  .pcmp-ph .avt{border-radius:50%;width:clamp(30px,8.5vw,40px)!important;height:clamp(30px,8.5vw,40px)!important}
+  .pcmp-ph .avt>svg{width:100%!important;height:100%!important}
+  .pcmp-ph.lead .avt{box-shadow:0 0 0 2px var(--gold)}
+  .pcmp-ph .phn{font-family:var(--display);font-weight:800;font-size:17px;line-height:1.05;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .pcmp-ph .phq{font-size:9.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--gold);font-weight:700;display:inline-flex;align-items:center;gap:3px;line-height:1;min-height:11px}
+  .pcmp-ph .phq .ic{color:var(--gold)}
+  .pcmp-ph .phq.none{color:var(--muted-2)}
+  .pcmp-ph .phx{position:absolute;top:-2px;right:0;width:16px;height:16px;border:none;background:none;color:var(--muted-2);font-size:15px;line-height:1;cursor:pointer;padding:0}
+  .pcmp-ph .phx:hover{color:var(--live)}
+  .pcmp-lbl{display:flex;align-items:center;font-size:11.5px;color:var(--muted);font-weight:600;padding:0 4px 0 2px;min-width:0}
+  .pcmp-v{display:flex;align-items:center;justify-content:center;gap:3px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:9px 4px;min-width:0}
+  .pcmp-v>span{font-family:var(--display);font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+  .pcmp-v.txt>span{font-family:inherit;font-weight:700;font-size:11.5px}
+  .pcmp-v.win>span{color:inherit}
+  .pcmp-v .wtri{font-size:8px;line-height:1;flex:none}
+  .pcmp-hint{font-size:12px;color:var(--muted);text-align:center;padding:12px 4px 2px}
+  @media(max-width:560px){
+    .pcmpwrap{--pcmp-lw:80px}
+    .pcmp-row{gap:4px}
+    .pcmp-lbl{font-size:10.5px;padding-left:0}
+    .pcmp-v{padding:8px 3px;border-radius:8px}
+    .pcmp-v>span{font-size:13px}
+    .pcmp-v.txt>span{font-size:10px}
+    .pcmp-ph .phn{font-size:14.5px}
+    .pcmp-ph .phq{font-size:9px}
+  }
 </style>
 </head>
 <body>
@@ -892,7 +938,8 @@ const ICONS={
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
   edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19h3.2L18.5 8.7a2 2 0 0 0-2.8-2.8L5.4 16.2z"/><path d="M14 7.5l2.8 2.8"/></svg>',
   tv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="12" rx="2"/><path d="M8 20.5h8M10 11l4 2.4-4 2.4z"/></svg>',
-  play:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.4l5.2 3.6-5.2 3.6z"/></svg>'
+  play:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.4l5.2 3.6-5.2 3.6z"/></svg>',
+  compare:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8.5 20h7M5 7h14M12 4.5l-7 2.5M12 4.5l7 2.5"/><path d="M2.6 12.4 5 7l2.4 5.4a2.5 2.5 0 0 1-4.8 0Z"/><path d="M16.6 12.4 19 7l2.4 5.4a2.5 2.5 0 0 1-4.8 0Z"/></svg>'
 };
 const icon=(name,sz)=>`<span class="ic" style="width:${sz||16}px;height:${sz||16}px">${ICONS[name]||""}</span>`;
 
@@ -1325,7 +1372,7 @@ function buildGeral(){
 
 /* ===================== ABAS / NAVEGAÇÃO ===================== */
 let activeTab="bolao";
-const TABS=[["bolao","ball","Bolão"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["selecoes","flag","Estatísticas"],["corrida","race","Corrida"]];
+const TABS=[["bolao","ball","Bolão"],["grupos","table","Grupos"],["mata","bracket","Mata-mata"],["selecoes","flag","Estatísticas"],["corrida","race","Corrida"],["comparar","compare","Comparar"]];
 function renderActive(){
   if(activeTab!=="corrida"){stopRace();}
   if(activeTab!=="bolao"){stopCountdown();}
@@ -1335,6 +1382,7 @@ function renderActive(){
   else if(activeTab==="mata")renderBracket();
   else if(activeTab==="selecoes")renderSelecoes();
   else if(activeTab==="corrida")renderRace();
+  else if(activeTab==="comparar")renderCompare();
 }
 function buildTabs(){
   const nav=document.getElementById("tabs");if(!nav)return;nav.innerHTML="";
@@ -1520,6 +1568,7 @@ function renderGroups(){
    Gol contra não conta pro artilheiro; pênalti em bola rolando (p) conta; disputa de pênalti NÃO conta.
    _scKey agrupa grafias do mesmo artilheiro (ex.: "Kylian Mbappé" / "K. Mbappé"). */
 let selTeam=null,_selSig="";
+let cmpSel=[],_cmpSig="";const CMP_MAX=6;
 const SELG="#1FB57A",SELA="#e0868f"; // verde do "015" (feitos) e vermelho suave (tomados) — sem degradê
 function selPlayed(){return GAMES.filter(g=>classify(g)!=="upcoming"&&+g.home_team_id&&+g.away_team_id&&TEAMS[+g.home_team_id]&&TEAMS[+g.away_team_id]);}
 function parseGoals(raw){
@@ -2678,6 +2727,167 @@ function openProfile(p){
   m.querySelector(".prof-x").onclick=closeProfile;
   m.querySelector(".prof-share").onclick=()=>{closeProfile();openShareModal(()=>makeProfileCanvas(p),"perfil-"+p+".png","Perfil · "+p);};
   m.addEventListener("click",e=>{if(e.target===m)closeProfile();});
+}
+
+/* ===================== COMPARAR PALPITEIROS ===================== */
+const CMP_EMPTY_SVG='<svg viewBox="0 0 260 128" width="234" height="115" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
+  '<circle cx="92" cy="60" r="37" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-dasharray="5 7"/>'+
+  '<circle cx="168" cy="60" r="37" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-dasharray="5 7"/>'+
+  '<circle cx="92" cy="52" r="9" stroke="rgba(255,255,255,.22)" stroke-width="2"/>'+
+  '<path d="M77 78c1-9 7-13 15-13s14 4 15 13" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>'+
+  '<circle cx="168" cy="52" r="9" stroke="rgba(255,255,255,.22)" stroke-width="2"/>'+
+  '<path d="M153 78c1-9 7-13 15-13s14 4 15 13" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>'+
+  '<rect x="115" y="45" width="30" height="30" rx="9" fill="#1FB57A"/>'+
+  '<text x="130" y="65" text-anchor="middle" font-family="Barlow Condensed,Arial,sans-serif" font-weight="800" font-size="16" fill="#08130d">VS</text>'+
+  '</svg>';
+// definição das estatísticas comparadas (dir: 1 = maior melhor, -1 = menor melhor, 0 = sem destaque)
+function cmpDefs(){
+  const rr=rankRows(),byP={};rr.forEach(r=>byP[r.p]=r);
+  const avg=rr.length?rr.reduce((s,r)=>s+r.t,0)/rr.length:0;
+  const S={},D={};PLAYERS.forEach(p=>{S[p]=null;D[p]=null;});
+  const st=p=>(S[p]||(S[p]=playerStats(p))),dn=p=>(D[p]||(D[p]=palpiteDNA(p)));
+  const tot=p=>byP[p]?byP[p].t:st(p).total;
+  return [
+    {label:"Posição",dir:-1,get:p=>byP[p]?byP[p].rank:99,fmt:v=>"#"+v},
+    {label:"Pontos",dir:1,get:tot,fmt:v=>String(v)},
+    {label:"Cravadas",dir:1,get:p=>st(p).crav,fmt:v=>String(v)},
+    {label:"Acertos",dir:1,get:p=>st(p).venc,fmt:v=>String(v)},
+    {label:"Erros",dir:-1,get:p=>st(p).err,fmt:v=>String(v)},
+    {label:"Aproveit.",dir:1,get:p=>st(p).aprov,fmt:v=>Math.round(v)+"%"},
+    {label:"Palpites",dir:0,get:p=>st(p).nPalp,fmt:v=>String(v)},
+    {label:"Sequência",dir:1,get:p=>st(p).streak,fmt:v=>v+"j"},
+    {label:"Recorde seq.",dir:1,get:p=>st(p).bestStreak,fmt:v=>v+"j"},
+    {label:"vs. média",dir:1,get:p=>Math.round(tot(p)-avg),fmt:v=>(v>=0?"+":"")+v},
+    {label:"Gols/palpite",dir:0,get:p=>dn(p).avg,fmt:v=>v.toFixed(1)},
+    {label:"Placar fav.",dir:0,text:true,get:p=>dn(p).fav||"—"},
+    {label:"Estilo",dir:0,text:true,get:p=>dn(p).estilo}
+  ];
+}
+// monta as linhas (com destaque de quem lidera) + o placar de quesitos por jogador
+function cmpCompute(players){
+  const defs=cmpDefs(),wins={};players.forEach(p=>wins[p]=0);
+  const rows=defs.map(d=>{
+    const raws=players.map(d.get);
+    const cells=players.map((p,i)=>({raw:raws[i],disp:d.text?String(raws[i]):d.fmt(raws[i]),win:false}));
+    if(d.dir!==0&&players.length>1){
+      const nums=raws.filter(v=>typeof v==="number"&&!isNaN(v));
+      if(nums.length){
+        const best=d.dir>0?Math.max.apply(null,nums):Math.min.apply(null,nums);
+        const allSame=nums.every(v=>v===nums[0]);
+        if(!allSame)cells.forEach((c,i)=>{if(c.raw===best){c.win=true;wins[players[i]]++;}});
+      }
+    }
+    return {label:d.label,text:!!d.text,cells};
+  });
+  let maxWins=0;players.forEach(p=>{if(wins[p]>maxWins)maxWins=wins[p];});
+  const hdr=players.map(p=>({p,quesitos:wins[p],lead:maxWins>0&&wins[p]===maxWins}));
+  return {rows,hdr};
+}
+function renderCompare(){
+  const app=document.getElementById("app");if(!app)return;
+  const dsig=GAMES.filter(g=>classify(g)!=="upcoming").map(g=>g.id+":"+g.home_score+"-"+g.away_score).join("|");
+  const sig=cmpSel.join(",")+"||"+dsig;
+  if(_cmpSig===sig&&app.querySelector(".pcmpwrap"))return;
+  _cmpSig=sig;
+  app.innerHTML="";
+  const wrap=document.createElement("div");wrap.className="pcmpwrap";
+  const ti=document.createElement("div");ti.className="sectitle";ti.textContent="Comparar palpiteiros";
+  wrap.appendChild(ti);
+  const intro=document.createElement("div");intro.className="pcmp-intro";
+  intro.innerHTML="Escolha até <b style=\"color:var(--ink)\">"+CMP_MAX+"</b> jogadores para comparar lado a lado — destacamos quem lidera cada quesito.";
+  wrap.appendChild(intro);
+  // seletor de jogadores
+  const pick=document.createElement("div");pick.className="pcmp-pick";
+  PLAYERS.forEach(p=>{
+    const on=cmpSel.includes(p),dis=!on&&cmpSel.length>=CMP_MAX;
+    const chip=document.createElement("button");chip.type="button";
+    chip.className="pcmp-chip"+(on?" on":"")+(dis?" dis":"");
+    chip.innerHTML=avatarHTML(p,22)+'<span class="nm">'+p+'</span>'+(on?'<span class="cx">×</span>':"");
+    if(on){chip.style.borderColor=pColor(p);chip.querySelector(".nm").style.color=pColor(p);}
+    chip.onclick=()=>{if(on)cmpSel=cmpSel.filter(x=>x!==p);else{if(cmpSel.length>=CMP_MAX)return;cmpSel=cmpSel.concat(p);}renderCompare();};
+    pick.appendChild(chip);
+  });
+  wrap.appendChild(pick);
+  if(!cmpSel.length){
+    const e=document.createElement("div");e.className="pcmp-empty";
+    e.innerHTML=CMP_EMPTY_SVG+"<b>Compare os palpiteiros</b><span>Toque nos jogadores acima para montar o comparativo e ver quem leva a melhor em cada estatística.</span>";
+    wrap.appendChild(e);app.appendChild(wrap);return;
+  }
+  const multi=cmpSel.length>1;
+  const data=cmpCompute(cmpSel);
+  const sc=selCard("compare","Comparativo",multi?function(){const sel=cmpSel.slice();openShareModal(function(){return makeCompareCanvas(sel);},"comparativo-bolao-015.png","Comparativo");}:null,cmpSel.length+(cmpSel.length===1?" jogador":" jogadores"));
+  const scroll=document.createElement("div");scroll.className="pcmp-scroll";
+  const tbl=document.createElement("div");tbl.className="pcmp-table";
+  const cols="var(--pcmp-lw) repeat("+cmpSel.length+",minmax(0,1fr))";
+  // cabeçalho: avatar + nome (cor do jogador) + quesitos liderados + remover
+  const hr=document.createElement("div");hr.className="pcmp-row pcmp-head";hr.style.gridTemplateColumns=cols;
+  hr.appendChild(document.createElement("div")); // canto vazio (coluna dos rótulos)
+  data.hdr.forEach(h=>{
+    const c=document.createElement("div");c.className="pcmp-ph"+(multi&&h.lead?" lead":"");
+    let q="";
+    if(multi)q='<span class="phq'+(h.quesitos?"":" none")+'">'+(h.lead?icon("trophy",11):"")+h.quesitos+" "+(h.quesitos===1?"quesito":"quesitos")+"</span>";
+    c.innerHTML=avatarHTML(h.p,40)+'<span class="phn" style="color:'+pColor(h.p)+'">'+h.p+"</span>"+q;
+    const xb=document.createElement("button");xb.className="phx";xb.type="button";xb.title="Remover";xb.textContent="×";
+    xb.onclick=()=>{cmpSel=cmpSel.filter(x=>x!==h.p);renderCompare();};
+    c.appendChild(xb);hr.appendChild(c);
+  });
+  tbl.appendChild(hr);
+  // linhas de estatística
+  data.rows.forEach(r=>{
+    const row=document.createElement("div");row.className="pcmp-row";row.style.gridTemplateColumns=cols;
+    const lbl=document.createElement("div");lbl.className="pcmp-lbl";lbl.textContent=r.label;row.appendChild(lbl);
+    r.cells.forEach((c,i)=>{
+      const v=document.createElement("div");v.className="pcmp-v"+(r.text?" txt":"")+(c.win?" win":"");
+      if(c.win){const p=cmpSel[i];v.style.background=mix(pColor(p),"#141A22",0.72);v.style.color=shade(pColor(p),40);v.style.borderColor=mix(pColor(p),"#141A22",0.5);}
+      v.innerHTML=(c.win?'<span class="wtri">▲</span>':"")+"<span>"+c.disp+"</span>";
+      row.appendChild(v);
+    });
+    tbl.appendChild(row);
+  });
+  scroll.appendChild(tbl);sc.body.appendChild(scroll);
+  if(!multi){const h=document.createElement("div");h.className="pcmp-hint";h.textContent="Adicione mais um jogador para destacar quem lidera cada quesito.";sc.body.appendChild(h);}
+  wrap.appendChild(sc.card);
+  app.appendChild(wrap);
+}
+async function makeCompareCanvas(players){
+  const data=cmpCompute(players),N=players.length;
+  const W=680,P=34,LW=150,rowH=40,hHdr=98,footH=48,Y0=100;
+  const colW=(W-2*P-LW)/N;
+  const H=Y0+hHdr+data.rows.length*rowH+footH;
+  const A=await loadAvatars(players);
+  const {cv,x}=cvBase(W,H);
+  cvBrand(x,W,P,"Comparativo de palpiteiros");
+  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,Y0-12);x.lineTo(W-P,Y0-12);x.stroke();
+  // cabeçalho dos jogadores
+  players.forEach((p,i)=>{
+    const cx=P+LW+i*colW+colW/2,ay=Y0+2,D=48;
+    drawAvatar(x,A(p),cx-D/2,ay,D);
+    if(N>1&&data.hdr[i].lead){x.strokeStyle="#E6B450";x.lineWidth=2.6;x.beginPath();x.arc(cx,ay+D/2,D/2+1.5,0,7);x.stroke();}
+    x.textAlign="center";x.font="800 19px 'Barlow Condensed',sans-serif";x.fillStyle=pColor(p);
+    x.fillText(cvTrunc(x,p,colW-6),cx,ay+D+18);
+    if(N>1){const q=data.hdr[i];x.font="700 10px Inter,Arial,sans-serif";x.fillStyle=q.quesitos?"#E6B450":"#5d6b7a";
+      x.fillText(q.quesitos+" "+(q.quesitos===1?"quesito":"quesitos"),cx,ay+D+34);}
+  });
+  x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=1;x.beginPath();x.moveTo(P,Y0+hHdr-6);x.lineTo(W-P,Y0+hHdr-6);x.stroke();
+  // linhas
+  x.textBaseline="middle";
+  data.rows.forEach((r,ri)=>{
+    const ry=Y0+hHdr+ri*rowH,cy=ry+rowH/2;
+    x.textAlign="left";x.font="600 12px Inter,Arial,sans-serif";x.fillStyle="#8A98A8";
+    x.fillText(r.label,P+2,cy);
+    r.cells.forEach((c,i)=>{
+      const x0=P+LW+i*colW+3,cw=colW-6,y=ry+4,h=rowH-8,ccx=x0+cw/2,p=players[i];
+      if(c.win){x.fillStyle=mix(pColor(p),"#141A22",0.72);rrect(x,x0,y,cw,h,8);x.fill();
+        x.strokeStyle=mix(pColor(p),"#141A22",0.42);x.lineWidth=1;rrect(x,x0,y,cw,h,8);x.stroke();}
+      else{x.fillStyle="#101720";rrect(x,x0,y,cw,h,8);x.fill();}
+      x.textAlign="center";
+      if(r.text){x.font="700 12px Inter,Arial,sans-serif";x.fillStyle=c.win?shade(pColor(p),42):"#C7D0DA";x.fillText(cvTrunc(x,c.disp,cw-10),ccx,cy);}
+      else{x.font="800 18px 'Barlow Condensed',sans-serif";x.fillStyle=c.win?shade(pColor(p),46):"#EAF0F6";x.fillText(c.disp,ccx,cy);}
+    });
+  });
+  x.textBaseline="alphabetic";
+  cvFooter(x,W,H,"Comparativo · Bolão 015 · Copa 2026");
+  return cv;
 }
 
 /* ===================== CONTAGEM REGRESSIVA (próximo jogo) ===================== */
