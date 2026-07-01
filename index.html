@@ -619,7 +619,7 @@
   .selsub{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 5px}
   .tlink{cursor:pointer}
   .tlink:hover{text-decoration:underline}
-  .fx[data-goteam]{cursor:pointer}
+  [data-goteam]{cursor:pointer}
   .rmore{width:100%;margin-top:9px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted);font:inherit;font-weight:700;font-size:12.5px;padding:9px;border-radius:10px;cursor:pointer}
   .rmore:hover{color:var(--ink);border-color:var(--line-2)}
   .scorer{display:flex;align-items:center;gap:11px;padding:8px 3px;border-bottom:1px solid var(--line)}
@@ -1164,9 +1164,9 @@ function buildHistoryCard(g){
   row.innerHTML=`
     <span class="clock">${icon("flag",19)}</span>
     <span class="vs">
-      <img src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t">${nm(+g.home_team_id)}</span>
+      <img data-goteam="${+g.home_team_id}" src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t" data-goteam="${+g.home_team_id}">${nm(+g.home_team_id)}</span>
       <span class="res">${ra} × ${rb}</span>
-      <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
+      <span class="t" data-goteam="${+g.away_team_id}">${nm(+g.away_team_id)}</span><img data-goteam="${+g.away_team_id}" src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
     </span>
     <span class="when past">${k.d}<small>${editMode&&empty?"sem palpites":("grupo "+(g.group||"-"))}</small></span>
     ${watchLink(g.id)}
@@ -1189,7 +1189,7 @@ function buildHistoryCard(g){
     body.appendChild(subH);body.appendChild(listEl);
     histRefs[g.id]=listEl;
   }
-  row.onclick=ev=>{if(ev.target.closest(".rowshare,.watchbtn"))return;const op=card.classList.toggle("open");expanded[key]=op;if(op&&mountGrid)mountGrid();};
+  row.onclick=ev=>{if(ev.target.closest(".rowshare,.watchbtn,[data-goteam]"))return;const op=card.classList.toggle("open");expanded[key]=op;if(op&&mountGrid)mountGrid();};
   card.append(row,body);
   return card;
 }
@@ -1233,9 +1233,9 @@ function buildLiveCard(g){
   const scoreEl=document.createElement("div");scoreEl.className="bigscore";
   scoreEl.innerHTML=`<span class="s">${ra}</span><span class="x">:</span><span class="s">${rb}</span>`;
   sl.innerHTML=`
-    <div class="team"><img src="${flag(+g.home_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.home_team_id)}</div>${stkHome}</div>
+    <div class="team"><img data-goteam="${+g.home_team_id}" src="${flag(+g.home_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm" data-goteam="${+g.home_team_id}">${nm(+g.home_team_id)}</div>${stkHome}</div>
     <div></div>
-    <div class="team"><img src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm">${nm(+g.away_team_id)}</div>${stkAway}</div>`;
+    <div class="team"><img data-goteam="${+g.away_team_id}" src="${flag(+g.away_team_id,66)}" alt="" onerror="this.style.visibility='hidden'"><div class="nm" data-goteam="${+g.away_team_id}">${nm(+g.away_team_id)}</div>${stkAway}</div>`;
   sl.children[1].appendChild(scoreEl);
   card.appendChild(sl);
 
@@ -1266,9 +1266,9 @@ function buildSoonCard(g){
   row.innerHTML=`
     <span class="clock">${icon("clock",19)}</span>
     <span class="vs">
-      <img src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t">${nm(+g.home_team_id)}</span>
+      <img data-goteam="${+g.home_team_id}" src="${flag(+g.home_team_id,30)}" alt="" onerror="this.style.visibility='hidden'"><span class="t" data-goteam="${+g.home_team_id}">${nm(+g.home_team_id)}</span>
       <span class="mid">×</span>
-      <span class="t">${nm(+g.away_team_id)}</span><img src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
+      <span class="t" data-goteam="${+g.away_team_id}">${nm(+g.away_team_id)}</span><img data-goteam="${+g.away_team_id}" src="${flag(+g.away_team_id,30)}" alt="" onerror="this.style.visibility='hidden'">
     </span>
     <span class="when">${k.h}<small>${k.d} · ${g.type==="group"?("grupo "+(g.group||"-")):koRoundName(g.type)}</small></span>
     ${watchLink(g.id)}
@@ -1281,7 +1281,7 @@ function buildSoonCard(g){
   body.appendChild(subG);body.appendChild(guessGrid(g.id));
   if(g.type==="group"&&g.group){const stk=buildStakes(g.group,g);if(stk)body.appendChild(stk);const scn=cardScenarioSection(g.group);if(scn)body.appendChild(scn);}
   else{const kp=koPreviewSection(g);if(kp)body.appendChild(kp);}
-  row.onclick=ev=>{if(ev.target.closest(".watchbtn,.rowshare"))return;expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
+  row.onclick=ev=>{if(ev.target.closest(".watchbtn,.rowshare,[data-goteam]"))return;expanded[g.id]=!expanded[g.id];card.classList.toggle("open");};
   card.append(row,body);
   return card;
 }
@@ -2695,9 +2695,9 @@ function buildNextCountdown(){
   card.innerHTML=`<button class="cardshare nc-share" type="button" title="Compartilhar próximo jogo">${icon("share",14)}</button>
     <div class="nc-lab">${icon("clock",14)} Próximo jogo</div>
     <div class="nc-match">
-      <span class="nc-team"><img src="${flag(+g.home_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.home_team_id)}</span></span>
+      <span class="nc-team" data-goteam="${+g.home_team_id}"><img src="${flag(+g.home_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.home_team_id)}</span></span>
       <span class="nc-x">×</span>
-      <span class="nc-team"><img src="${flag(+g.away_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.away_team_id)}</span></span>
+      <span class="nc-team" data-goteam="${+g.away_team_id}"><img src="${flag(+g.away_team_id,48)}" onerror="this.style.visibility='hidden'"><span>${nm(+g.away_team_id)}</span></span>
     </div>
     <div class="nc-cd"><span class="nc-time">--:--:--</span></div>
     <div class="nc-when">${k.d} · ${k.h}${g.type!=="group"?(" · "+koRoundName(g.type)+" · Jogo "+g.id):(g.group?(" · Grupo "+g.group):"")+(g.matchday?(" · Rodada "+g.matchday):"")}</div>`;
